@@ -1,8 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:la_fiszki/pages/choose_cardboard.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Home extends StatelessWidget {
@@ -25,20 +25,14 @@ class Home extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   var directory = await getApplicationDocumentsDirectory();
-                  // print(directory);
-                  
-                  var cardboardDirectory = Directory('${directory.path}');
-                  // var res = ""  
+                  var cardboardDirectory = Directory(directory.path);  
                   if (await cardboardDirectory.exists()) {
                     File file = File('${cardboardDirectory.path}/cardboards/siema.json');
-                    print(await file.readAsString());
+                    // print(await file.readAsString());
+                    dynamic cardboardcontent = json.decoder.convert(await file.readAsString());
+                    print(cardboardcontent);
+                    log("siema");
                   }
-                //   else {
-                //     final Directory appDocDirNewFolder = await cardboardDirectory.create(recursive: true) 
-                //     res = appDocDirNewFolder.path;
-                //   final File file2 = File('${res}siema.json');
-                //   await file2.writeAsString(await file.readAsString());
-                // },
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
@@ -54,8 +48,9 @@ class Home extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+                  FilePickerResult? result = await FilePicker.platform.pickFiles(
+                    allowedExtensions: ['.json'],
+                  );
                   if (result != null) {
                     File file = File(result.files.single.path ?? "");
                     if (file.existsSync()) {
@@ -70,17 +65,10 @@ class Home extends StatelessWidget {
                       }
                       else {
                         final Directory appDocDirNewFolder = await cardboardDirectory.create(recursive: true);
-
                         res = appDocDirNewFolder.path;
                       }
-
                       final File file2 = File('${res}siema.json');
                       await file2.writeAsString(await file.readAsString());
-                      // File newCardboardFile = File("${directory.path}/cardboards/${basename(file.path)}");
-                      //newCardboardFile.writeAsStringSync(file.readAsStringSync());
-                      //newCardboardFile.createSync(recursive: true);
-
-                      // directory.pathsv 
                     }
                   } else {
                     // User canceled the picker
