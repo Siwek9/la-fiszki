@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:la_fiszki/cardboard.dart';
+import 'package:la_fiszki/flashcard.dart';
 
 class ChooseCardboard extends StatelessWidget {
-  final List<Cardboard> cardboards;
+  final List<Flashcard> cardboards;
 
-  ChooseCardboard({super.key}) : cardboards = [Cardboard("name"), Cardboard("name"), Cardboard("name")];
+  ChooseCardboard({super.key})
+      : cardboards = [Flashcard("name"), Flashcard("name"), Flashcard("name")];
 
 // CardboardsStorage.getCardboardsFromStorage();
 
@@ -12,9 +13,8 @@ class ChooseCardboard extends StatelessWidget {
   Widget build(Object context) {
     return Scaffold(
       body: Column(
-        children: cardboards.map((cardboard) => Text(cardboard.name)).toList()
-      ),
+          children:
+              cardboards.map((cardboard) => Text(cardboard.name)).toList()),
     );
   }
-
 }

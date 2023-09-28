@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:la_fiszki/pages/choose_cardboard.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Home extends StatelessWidget {
@@ -14,88 +16,69 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("assets/images/logo.png"),
-              // HomePageButton(
-              //   nextPage: ChooseCardboard(),
-              //   text: "Otwórz fiszke" 
-              // ),
-              ElevatedButton(
-                onPressed: () async {
-                  var directory = await getApplicationDocumentsDirectory();
-                  var cardboardDirectory = Directory(directory.path);  
-                  if (await cardboardDirectory.exists()) {
-                    File file = File('${cardboardDirectory.path}/cardboards/siema.json');
-                    // print(await file.readAsString());
-                    dynamic cardboardcontent = json.decoder.convert(await file.readAsString());
-                    print(cardboardcontent);
-                    log("siema");
-                  }
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
-                ),
-                child: Text(
-                  "Otwórz fiszke",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    // backgroundColor: Colors.green
-                  )
-                )
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    allowedExtensions: ['.json'],
-                  );
-                  if (result != null) {
-                    File file = File(result.files.single.path ?? "");
-                    if (file.existsSync()) {
-                      var directory = await getApplicationDocumentsDirectory();
-                      print(directory);
-                      print(file.readAsStringSync());
-                      var cardboardDirectory = Directory('${directory.path}/cardboards/');
-                      var res = "";
-
-                      if (await cardboardDirectory.exists()) {
-                        res = cardboardDirectory.path;
-                      }
-                      else {
-                        final Directory appDocDirNewFolder = await cardboardDirectory.create(recursive: true);
-                        res = appDocDirNewFolder.path;
-                      }
-                      final File file2 = File('${res}siema.json');
-                      await file2.writeAsString(await file.readAsString());
-                    }
-                  } else {
-                    // User canceled the picker
-                  }
-                },
-                
-                style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
-                ),
-                child: Text(
-                  "Importuj fiszke",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    // backgroundColor: Colors.green
-                  )
-                ),
-              ),
-              
-              // HomePageButton(
-              //   nextPage: CreateCardboard(),
-              //   text: "Stwórz fiszke"
-              // ),
-            ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset("assets/images/logo.png"),
+          HomePageButton(nextPage: ChooseCardboard(), text: "Otwórz fiszke"),
+          // ElevatedButton(
+          //     style: ButtonStyle(
+          //       backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
+          //     ),
+          //     child: Text("Otwórz fiszke",
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 20.0,
+          //           // backgroundColor: Colors.green
+          //         ))),
+          ElevatedButton(
+            onPressed: importFlashcardFromFile,
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
+            ),
+            child: Text("Importuj fiszke",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                  // backgroundColor: Colors.green
+                )),
           ),
-      )
-    );
+
+          // HomePageButton(
+          //   nextPage: CreateCardboard(),
+          //   text: "Stwórz fiszke"
+          // ),
+        ],
+      ),
+    ));
+  }
+
+  void importFlashcardFromFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path ?? "");
+      if (file.existsSync()) {
+        var directory = await getApplicationDocumentsDirectory();
+        print(directory);
+        print(file.readAsStringSync());
+        var cardboardDirectory =
+            Directory('${directory.path}/la_fiszki/flashcards/');
+        var res = "";
+
+        if (await cardboardDirectory.exists()) {
+          res = cardboardDirectory.path;
+        } else {
+          final Directory appDocDirNewFolder =
+              await cardboardDirectory.create(recursive: true);
+          res = appDocDirNewFolder.path;
+        }
+        final File file2 = File('$res${basename(file.path)}');
+        log(file2.path);
+        await file2.writeAsString(await file.readAsString());
+      }
+    } else {
+      // User canceled the picker
+    }
   }
 }
 
@@ -108,20 +91,21 @@ class HomePageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => nextPage,
-      ));},
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => nextPage,
+            ));
+      },
       style: ButtonStyle(
         backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
       ),
-      child: Text(
-        text ?? "",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20.0,
-          // backgroundColor: Colors.green
-        )
-      ),
+      child: Text(text ?? "",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.0,
+            // backgroundColor: Colors.green
+          )),
     );
   }
 }
