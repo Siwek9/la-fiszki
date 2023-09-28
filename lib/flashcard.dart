@@ -3,29 +3,42 @@ import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Flashcard {
   String name;
 
   Flashcard(this.name);
+
+  static bool isFlashcard(String name) {
+    return true;
+  }
 }
 
 class FlashcardsStorage {
-  void getFlashcardsNameList() async {
+  static Future<List<String>> getFlashcardsNameList() async {
     var documentDirectory = await getApplicationDocumentsDirectory();
     var flashcardsDirectory =
         Directory("${documentDirectory.path}/la_fiszki/flashcards/");
-    // var cardboardDirectory = Directory(directory.path);
+
+    log(flashcardsDirectory.path);
     if (!await flashcardsDirectory.exists()) {
       flashcardsDirectory = await flashcardsDirectory.create(recursive: true);
     }
-    List flashcards = await flashcardsDirectory.list();
-    // List flashcards = await flashcardsDirectory.list();
-    // File file = File('${flashcardsDirectory.path}/siema.json');
-    // print(await file.readAsString());
-    // dynamic cardboardcontent = json.decoder.convert(await file.readAsString());
-    // log(cardboardcontent.toString());
-    // log("siema");
+    var flashcardsFileSystemEntityList =
+        flashcardsDirectory.listSync().toList(growable: false);
+
+    var flashcardsName = flashcardsFileSystemEntityList.map((e) {
+      return basename(e.path);
+    }).toList();
+
+    log(flashcardsName.toString());
+
+    return flashcardsName;
+  }
+
+  static Future<Flashcard> getFlashcardByName(String name) async {
+    return Flashcard("temp");
   }
 }

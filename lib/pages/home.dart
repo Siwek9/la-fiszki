@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:la_fiszki/pages/choose_cardboard.dart';
+import 'package:la_fiszki/pages/choose_flashcards.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -20,17 +19,7 @@ class Home extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset("assets/images/logo.png"),
-          HomePageButton(nextPage: ChooseCardboard(), text: "Otwórz fiszke"),
-          // ElevatedButton(
-          //     style: ButtonStyle(
-          //       backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
-          //     ),
-          //     child: Text("Otwórz fiszke",
-          //         style: TextStyle(
-          //           color: Colors.white,
-          //           fontSize: 20.0,
-          //           // backgroundColor: Colors.green
-          //         ))),
+          HomePageButton(nextPage: ChooseFlashcards(), text: "Otwórz fiszke"),
           ElevatedButton(
             onPressed: importFlashcardFromFile,
             style: ButtonStyle(
@@ -43,7 +32,6 @@ class Home extends StatelessWidget {
                   // backgroundColor: Colors.green
                 )),
           ),
-
           // HomePageButton(
           //   nextPage: CreateCardboard(),
           //   text: "Stwórz fiszke"
@@ -59,8 +47,6 @@ class Home extends StatelessWidget {
       File file = File(result.files.single.path ?? "");
       if (file.existsSync()) {
         var directory = await getApplicationDocumentsDirectory();
-        print(directory);
-        print(file.readAsStringSync());
         var cardboardDirectory =
             Directory('${directory.path}/la_fiszki/flashcards/');
         var res = "";
