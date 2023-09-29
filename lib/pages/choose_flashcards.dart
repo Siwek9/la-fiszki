@@ -23,10 +23,11 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
   @override
   Widget build(Object context) {
     return Scaffold(
+        backgroundColor: Colors.blue.shade700,
         body: FutureBuilder(
             future: _getFlashcardsName,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.connectionState != ConnectionState.done) {
                 return SafeArea(
                   child: Center(
                     child: Column(
@@ -36,9 +37,22 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
                   ),
                 );
               } else {
-                return LoadingAnimationWidget.horizontalRotatingDots(
-                    color: Colors.black, size: 200.0);
+                return LoadingScreen();
               }
             }));
+  }
+}
+
+class LoadingScreen extends StatelessWidget {
+  const LoadingScreen({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: LoadingAnimationWidget.horizontalRotatingDots(
+          color: Colors.blue.shade900, size: 150.0),
+    );
   }
 }
