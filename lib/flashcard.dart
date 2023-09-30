@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
@@ -30,7 +29,7 @@ class FlashcardsStorage {
         flashcardsDirectory.listSync().toList(growable: false);
 
     var flashcardsName = flashcardsFileSystemEntityList.map((e) {
-      return basename(e.path);
+      return basenameWithoutExtension(e.path);
     }).toList();
 
     log(flashcardsName.toString());
