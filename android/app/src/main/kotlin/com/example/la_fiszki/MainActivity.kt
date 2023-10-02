@@ -1,4 +1,4 @@
-package com.example.la_fiszki
+package com.siwek9.la_fiszki
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -5,7 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'flash_card_widget.dart';
 
 class ChooseFlashcards extends StatefulWidget {
-  ChooseFlashcards({super.key});
+  const ChooseFlashcards({super.key});
 
   @override
   State<ChooseFlashcards> createState() => _ChooseFlashcardsState();
