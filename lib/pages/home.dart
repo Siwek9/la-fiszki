@@ -1,10 +1,14 @@
-import 'dart:developer';
+import 'dart:convert';
 import 'dart:io';
+// import 'dart:js_util';
+import 'dart:math';
+import 'dart:developer' as dev;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/pages/choose_flashcards.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:la_fiszki/flashcard.dart';
+
+import '../flashcards_storage.dart';
 
 class Home extends StatelessWidget {
   const Home({
@@ -43,28 +47,45 @@ class Home extends StatelessWidget {
 
   void importFlashcardFromFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      File file = File(result.files.single.path ?? "");
-      if (file.existsSync()) {
-        var directory = await getApplicationDocumentsDirectory();
-        var cardboardDirectory =
-            Directory('${directory.path}/la_fiszki/flashcards/');
-        var res = "";
+    if (result == null) return;
 
-        if (await cardboardDirectory.exists()) {
-          res = cardboardDirectory.path;
-        } else {
-          final Directory appDocDirNewFolder =
-              await cardboardDirectory.create(recursive: true);
-          res = appDocDirNewFolder.path;
-        }
-        final File file2 = File('$res${basename(file.path)}');
-        log(file2.path);
-        await file2.writeAsString(await file.readAsString());
-      }
-    } else {
-      // User canceled the picker
-    }
+    File filePicked = File(result.files.single.path ?? "");
+    if (!await filePicked.exists()) return;
+
+    String fileContent = await filePicked.readAsString();
+    if (!Flashcard.isFlashcard(fileContent)) return;
+
+    var flashcardObject = jsonDecode(fileContent);
+    var flashcardName = flashcardObject['name'];
+    var flashcardsMainDir = await FlashcardsStorage.getFlashcardsMainDirectory();
+
+    var folderName = "";
+    late Directory newFlashcardDir;
+    do {
+      folderName = randomFolderName();
+      newFlashcardDir = Directory("${flashcardsMainDir.path}$folderName/");
+    } while (await newFlashcardDir.exists());
+
+    File newFlashcardFile = File("${newFlashcardDir.path}raw.json");
+    await newFlashcardFile.create(recursive: true);
+    fileContent = jsonEncode(flashcardObject); // compress the data
+    await newFlashcardFile.writeAsString(fileContent);
+
+    var catalogueObject = {
+      folderName: {'name': flashcardName}
+    };
+    dev.log(jsonEncode(catalogueObject));
+    var catalogue = await FlashcardsStorage.getCatalogue();
+    List<dynamic> catalogueJsonObject = jsonDecode(await catalogue.readAsString()) ?? List<dynamic>.empty();
+    catalogueJsonObject.add(catalogueObject);
+    await catalogue.writeAsString(jsonEncode(catalogueJsonObject));
+    dev.log("nice");
+  }
+
+  String randomFolderName() {
+    var rand = Random();
+    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(20, (index) => chars[rand.nextInt(chars.length)]).join();
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../flashcards_storage.dart';
 import 'flash_card_widget.dart';
 
 class ChooseFlashcards extends StatefulWidget {
@@ -64,20 +65,12 @@ class FlashcardsLoaded extends StatelessWidget {
                                 moveToFlashCard(context, flashcardName);
                               },
                               style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.zero,
-                                          side: BorderSide(
-                                              color: Colors.blue.shade600))),
-                                  fixedSize: MaterialStateProperty.all(
-                                      Size(250.0, 70.0)),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.blue),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.black)),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero, side: BorderSide(color: Colors.blue.shade600))),
+                                  fixedSize: MaterialStateProperty.all(Size(250.0, 70.0)),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                                  foregroundColor: MaterialStateProperty.all(Colors.black)),
                               child: Text(flashcardName)))
                           .toList()),
                 )),
@@ -104,8 +97,7 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: LoadingAnimationWidget.horizontalRotatingDots(
-          color: Colors.blue.shade900, size: 150.0),
+      child: LoadingAnimationWidget.horizontalRotatingDots(color: Colors.blue.shade900, size: 150.0),
     );
   }
 }
