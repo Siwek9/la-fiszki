@@ -31,8 +31,5 @@ class FlashcardsStorage {
     return Directory("${documentDirectory.path}/la_fiszki/flashcards/");
   }
 
-  static Future<File> getCatalogue() async {
-    var flashcardsPath = (await getFlashcardsMainDirectory()).path;
-    return File("${flashcardsPath}catalogue.json");
-  }
+  
 }

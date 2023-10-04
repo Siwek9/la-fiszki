@@ -55,10 +55,11 @@ class Home extends StatelessWidget {
     String fileContent = await filePicked.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) return;
 
-    var flashcardObject = jsonDecode(fileContent);
-    var flashcardName = flashcardObject['name'];
-    var flashcardsMainDir = await FlashcardsStorage.getFlashcardsMainDirectory();
+    // var flashcardObject = jsonDecode(fileContent);
 
+    // var flashcardName = flashcardObject['name'];
+
+    var flashcardsMainDir = await FlashcardsStorage.getFlashcardsMainDirectory();
     var folderName = "";
     late Directory newFlashcardDir;
     do {
@@ -71,14 +72,14 @@ class Home extends StatelessWidget {
     fileContent = jsonEncode(flashcardObject); // compress the data
     await newFlashcardFile.writeAsString(fileContent);
 
-    var catalogueObject = {
-      folderName: {'name': flashcardName}
-    };
-    dev.log(jsonEncode(catalogueObject));
-    var catalogue = await FlashcardsStorage.getCatalogue();
-    List<dynamic> catalogueJsonObject = jsonDecode(await catalogue.readAsString()) ?? List<dynamic>.empty();
-    catalogueJsonObject.add(catalogueObject);
-    await catalogue.writeAsString(jsonEncode(catalogueJsonObject));
+    var catalogueObject = Catalogue.getCatalogueElement(folderName: folderName, json: jsonDecode(fileContent));
+
+    await Catalogue.addElement(catalogueObject);
+    // var catalogue = await FlashcardsStorage.getCatalogue();
+
+    // List<dynamic> catalogueJsonObject = jsonDecode(await catalogue.readAsString()) ?? List<dynamic>.empty();
+    // catalogueJsonObject.add(catalogueObject);
+    // await catalogue.writeAsString(jsonEncode(catalogueJsonObject));
     dev.log("nice");
   }
 
