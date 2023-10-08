@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:la_fiszki/widgets/loading_screen.dart';
 
 import '../flashcards_storage.dart';
-import 'flash_card_widget.dart';
+import 'flashcard_widget.dart';
 
 class ChooseFlashcards extends StatefulWidget {
   const ChooseFlashcards({super.key});
@@ -13,14 +14,12 @@ class ChooseFlashcards extends StatefulWidget {
 }
 
 class _ChooseFlashcardsState extends State<ChooseFlashcards> {
-  late Future<List<String>> _getFlashcardsName;
-  late List<String> flashcardsName;
+  late Future<List<CatalogueElement>> _getFlashcardsData;
 
   @override
   void initState() {
     super.initState();
-
-    _getFlashcardsName = FlashcardsStorage.getFlashcardsNameList();
+    _getFlashcardsData = FlashcardsStorage.getFlashcardsDataList();
   }
 
   @override
@@ -28,22 +27,24 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: FutureBuilder(
-            future: _getFlashcardsName,
+            future: _getFlashcardsData,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
                 return FlashcardsLoaded(
-                  flashcardsName: snapshot.data ?? List<String>.empty(),
+                  flashcardsData:
+                      snapshot.data ?? List<CatalogueElement>.empty(),
                 );
               } else {
-                return LoadingScreen();
+                return LoadingScreen.wholeScreen();
               }
             }));
   }
 }
 
 class FlashcardsLoaded extends StatelessWidget {
-  final List<String> flashcardsName;
-  const FlashcardsLoaded({super.key, required this.flashcardsName});
+  final List<CatalogueElement> flashcardsData;
+  const FlashcardsLoaded({super.key, required this.flashcardsData});
 
   @override
   Widget build(BuildContext context) {
@@ -59,19 +60,27 @@ class FlashcardsLoaded extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
-                      children: flashcardsName
-                          .map((flashcardName) => ElevatedButton(
+                      children: flashcardsData
+                          .map((flashcardData) => ElevatedButton(
                               onPressed: () {
-                                moveToFlashCard(context, flashcardName);
+                                moveToFlashCard(context, flashcardData);
                               },
                               style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.zero, side: BorderSide(color: Colors.blue.shade600))),
-                                  fixedSize: MaterialStateProperty.all(Size(250.0, 70.0)),
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  backgroundColor: MaterialStateProperty.all(Colors.blue),
-                                  foregroundColor: MaterialStateProperty.all(Colors.black)),
-                              child: Text(flashcardName)))
+                                  shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.zero,
+                                          side: BorderSide(
+                                              color: Colors.blue.shade600))),
+                                  fixedSize: MaterialStateProperty.all(
+                                      Size(250.0, 70.0)),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  backgroundColor:
+                                      MaterialStateProperty.all(Colors.blue),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.black)),
+                              child: Text(flashcardData.name)))
                           .toList()),
                 )),
           ],
@@ -80,24 +89,12 @@ class FlashcardsLoaded extends StatelessWidget {
     );
   }
 
-  void moveToFlashCard(BuildContext context, String flashcardName) {
+  void moveToFlashCard(BuildContext context, CatalogueElement flashcardData) {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FlashCardWidget(content: Flashcard("jupi")),
-        ));
-  }
-}
-
-class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: LoadingAnimationWidget.horizontalRotatingDots(color: Colors.blue.shade900, size: 150.0),
-    );
+            builder: (context) => FlashcardWidget(
+                futureFlashcard:
+                    Flashcard.fromFolderName(flashcardData.folderName))));
   }
 }

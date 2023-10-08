@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:developer' as dev;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
 
@@ -55,11 +56,9 @@ class Home extends StatelessWidget {
     String fileContent = await filePicked.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) return;
 
-    // var flashcardObject = jsonDecode(fileContent);
+    var flashcardsMainDir =
+        await FlashcardsStorage.getFlashcardsMainDirectory();
 
-    // var flashcardName = flashcardObject['name'];
-
-    var flashcardsMainDir = await FlashcardsStorage.getFlashcardsMainDirectory();
     var folderName = "";
     late Directory newFlashcardDir;
     do {
@@ -69,10 +68,11 @@ class Home extends StatelessWidget {
 
     File newFlashcardFile = File("${newFlashcardDir.path}raw.json");
     await newFlashcardFile.create(recursive: true);
-    fileContent = jsonEncode(flashcardObject); // compress the data
+    fileContent = jsonEncode(jsonDecode(fileContent)); // compress the data
     await newFlashcardFile.writeAsString(fileContent);
 
-    var catalogueObject = Catalogue.getCatalogueElement(folderName: folderName, json: jsonDecode(fileContent));
+    var catalogueObject = Catalogue.createCatalogueElement(
+        folderName: folderName, json: jsonDecode(fileContent));
 
     await Catalogue.addElement(catalogueObject);
     // var catalogue = await FlashcardsStorage.getCatalogue();
@@ -85,8 +85,10 @@ class Home extends StatelessWidget {
 
   String randomFolderName() {
     var rand = Random();
-    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(20, (index) => chars[rand.nextInt(chars.length)]).join();
+    const chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(20, (index) => chars[rand.nextInt(chars.length)])
+        .join();
   }
 }
 

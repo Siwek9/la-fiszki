@@ -2,11 +2,9 @@ import 'dart:developer' as dev;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/home.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
-
-// import 'flashcards_storage.dart';
-// import 'pages/choose_cardboard.dart';
 
 void main() {
   runApp(const LaFiszki());
@@ -33,12 +31,12 @@ class LaFiszki extends StatelessWidget {
 
   Future<void> initApp() async {
     var flashcardsDir = await FlashcardsStorage.getFlashcardsMainDirectory();
-    File catalogue = await FlashcardsStorage.getCatalogue();
+    File catalogue = await Catalogue.getFile();
 
     // TODO Remove before release
     // await catalogue.delete();
     // await flashcardsDir.delete(recursive: true);
-    dev.log("[initApp()]: ${await catalogue.readAsString()}");
+    // dev.log("[initApp()]: ${await catalogue.readAsString()}");
 
     if (!await catalogue.exists()) {
       dev.log("[initApp()]: " "katalog nie istnieje");
@@ -48,7 +46,8 @@ class LaFiszki extends StatelessWidget {
       await catalogue.writeAsString("[]");
 
       dev.log("[initApp()]: ${await catalogue.readAsString()}");
-      dev.log("[initApp()]: ${(await flashcardsDir.list().toList()).map((e) => e.path)}");
+      dev.log(
+          "[initApp()]: ${(await flashcardsDir.list().toList()).map((e) => e.path)}");
     }
   }
 }
