@@ -14,23 +14,34 @@ class FlashcardWidget extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              body: SafeArea(
-                child: Card(
-                  child: Column(
-                    children: [
-                      Text(snapshot.data!.name),
-                      Text(snapshot.data!.author),
-                      Text(snapshot.data!.frontSideName)
-                    ],
-                  ),
-                ),
-              ),
-            );
+            return FlashcardContentWidget(content: snapshot.data!);
           } else {
             return LoadingScreen.wholeScreen();
           }
         });
     // return Scaffold(body: Text(content.name));
+  }
+}
+
+class FlashcardContentWidget extends StatelessWidget {
+  final Flashcard content;
+  const FlashcardContentWidget({super.key, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Card(
+          child: Column(
+            children: [
+              Text(content.name),
+              Text(content.author),
+              Text(content.frontSideName),
+              Text(content.cards.map((e) => e.backSide).toString())
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
