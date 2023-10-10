@@ -69,10 +69,11 @@ class Flashcard {
     author = jsonObject['author'];
     frontSideName = jsonObject['sideName']['front'];
     backSideName = jsonObject['sideName']['back'];
-    cards = jsonObject['cardboards']
+    dev.log(jsonObject['cardboards'].toString());
+    cards = (jsonObject['cardboards'] as List<dynamic>)
         .map((element) => FlashcardElement(
             frontSide: element['front'], backSide: element['back']))
-        .toList();
+        .toList(growable: false);
   }
 }
 

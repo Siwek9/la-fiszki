@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
 
@@ -43,7 +44,7 @@ class LaFiszki extends StatelessWidget {
       catalogue = await catalogue.create(recursive: true);
 
       // TODO Read folders with flashcards and save them in the catalogue
-      await catalogue.writeAsString("[]");
+      await catalogue.writeAsString(jsonEncode(List.empty()));
 
       dev.log("[initApp()]: ${await catalogue.readAsString()}");
       dev.log(

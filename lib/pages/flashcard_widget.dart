@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/pages/flashcard_screen.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 class FlashcardWidget extends StatelessWidget {
@@ -31,13 +32,31 @@ class FlashcardContentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Card(
+        child: Center(
           child: Column(
             children: [
-              Text(content.name),
-              Text(content.author),
-              Text(content.frontSideName),
-              Text(content.cards.map((e) => e.backSide).toString())
+              Card(
+                child: Column(
+                  children: [
+                    Text(content.name),
+                    Text(content.author),
+                    Text(content.frontSideName),
+                    Text(content.cards.map((e) => e.backSide).toString())
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FlashcardScreen(cards: content.cards)));
+                    // Navigator.of(context)
+                    //   ..pop()
+                    //   ..push();
+                  },
+                  child: Text("Rozpocznij naukę"))
             ],
           ),
         ),
