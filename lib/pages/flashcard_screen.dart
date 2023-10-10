@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/pages/flashcard_summary.dart';
 
 class FlashcardScreen extends StatefulWidget {
   const FlashcardScreen({super.key, required this.cards});
@@ -23,6 +24,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(children: [
+        Text("$cardNow/${cards.length}"),
         ElevatedButton(
           onPressed: () {
             setState(() {
@@ -54,6 +56,12 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
 
   void whenUserKnow(FlashcardElement card) {
     cardKnown.add(card);
+    if (cardNow == cards.length - 2) {
+      Navigator.of(context)
+        ..pop()
+        ..push(MaterialPageRoute(builder: (context) => FlashcardSummary()));
+      return;
+    }
     setState(() {
       cardNow++;
     });
@@ -61,6 +69,12 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
 
   void whenUserDontKnow(FlashcardElement card) {
     cardDoesntKnown.add(card);
+    if (cardNow == cards.length - 2) {
+      Navigator.of(context)
+        ..pop()
+        ..push(MaterialPageRoute(builder: (context) => FlashcardSummary()));
+      return;
+    }
     setState(() {
       cardNow++;
     });
