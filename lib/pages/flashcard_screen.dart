@@ -15,10 +15,8 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
   final List<FlashcardElement> cards;
   int cardNow = 0;
   bool sideNow = false;
-  List<FlashcardElement> cardKnown =
-      List<FlashcardElement>.empty(growable: true);
-  List<FlashcardElement> cardDoesntKnown =
-      List<FlashcardElement>.empty(growable: true);
+  List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
+  List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +30,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
             });
           },
           child: Card(
-            child: Text(
-                sideNow ? cards[cardNow].frontSide : cards[cardNow].backSide),
+            child: Text(sideNow ? cards[cardNow].frontSide : cards[cardNow].backSide),
           ),
         ),
         Row(
@@ -59,7 +56,11 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     if (cardNow == cards.length - 2) {
       Navigator.of(context)
         ..pop()
-        ..push(MaterialPageRoute(builder: (context) => FlashcardSummary()));
+        ..push(MaterialPageRoute(
+            builder: (context) => FlashcardSummary(
+                  knownFlashcards: cardKnown,
+                  dontKnownFlashcards: cardDoesntKnown,
+                )));
       return;
     }
     setState(() {
@@ -72,7 +73,11 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     if (cardNow == cards.length - 2) {
       Navigator.of(context)
         ..pop()
-        ..push(MaterialPageRoute(builder: (context) => FlashcardSummary()));
+        ..push(MaterialPageRoute(
+            builder: (context) => FlashcardSummary(
+                  knownFlashcards: cardKnown,
+                  dontKnownFlashcards: cardDoesntKnown,
+                )));
       return;
     }
     setState(() {

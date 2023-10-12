@@ -47,8 +47,7 @@ class LaFiszki extends StatelessWidget {
       await catalogue.writeAsString(jsonEncode(List.empty()));
 
       dev.log("[initApp()]: ${await catalogue.readAsString()}");
-      dev.log(
-          "[initApp()]: ${(await flashcardsDir.list().toList()).map((e) => e.path)}");
+      dev.log("[initApp()]: ${(await flashcardsDir.list().toList()).map((e) => e.path)}");
     }
   }
 }
