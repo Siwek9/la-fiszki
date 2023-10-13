@@ -5,17 +5,20 @@ import 'package:la_fiszki/widgets/loading_screen.dart';
 
 class FlashcardWidget extends StatelessWidget {
   final Future<Flashcard> futureFlashcard;
+  final String folderName;
   // late Flashcard content;
-  const FlashcardWidget({super.key, required this.futureFlashcard});
+  const FlashcardWidget({super.key, required this.folderName, required this.futureFlashcard});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: futureFlashcard,
         builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            return FlashcardContentWidget(content: snapshot.data!);
+          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            return FlashcardContentWidget(
+              content: snapshot.data!,
+              folderName: folderName,
+            );
           } else {
             return LoadingScreen.wholeScreen();
           }
@@ -26,7 +29,8 @@ class FlashcardWidget extends StatelessWidget {
 
 class FlashcardContentWidget extends StatelessWidget {
   final Flashcard content;
-  const FlashcardContentWidget({super.key, required this.content});
+  final String folderName;
+  const FlashcardContentWidget({super.key, required this.folderName, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +54,10 @@ class FlashcardContentWidget extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                FlashcardScreen(cards: content.cards)));
-                    // Navigator.of(context)
-                    //   ..pop()
-                    //   ..push();
+                            builder: (context) => FlashcardScreen(
+                                  cards: content.cards,
+                                  folderName: folderName,
+                                )));
                   },
                   child: Text("Rozpocznij naukę"))
             ],

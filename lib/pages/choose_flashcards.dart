@@ -29,11 +29,9 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
         body: FutureBuilder(
             future: _getFlashcardsData,
             builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
                 return FlashcardsLoaded(
-                  flashcardsData:
-                      snapshot.data ?? List<CatalogueElement>.empty(),
+                  flashcardsData: snapshot.data!,
                 );
               } else {
                 return LoadingScreen.wholeScreen();
@@ -66,20 +64,12 @@ class FlashcardsLoaded extends StatelessWidget {
                                 moveToFlashCard(context, flashcardData);
                               },
                               style: ButtonStyle(
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.zero,
-                                          side: BorderSide(
-                                              color: Colors.blue.shade600))),
-                                  fixedSize: MaterialStateProperty.all(
-                                      Size(250.0, 70.0)),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.blue),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.black)),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.zero, side: BorderSide(color: Colors.blue.shade600))),
+                                  fixedSize: MaterialStateProperty.all(Size(250.0, 70.0)),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                                  foregroundColor: MaterialStateProperty.all(Colors.black)),
                               child: Text(flashcardData.name)))
                           .toList()),
                 )),
@@ -93,8 +83,7 @@ class FlashcardsLoaded extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => FlashcardWidget(
-                futureFlashcard:
-                    Flashcard.fromFolderName(flashcardData.folderName))));
+            builder: (context) =>
+                FlashcardWidget(folderName: flashcardData.folderName, futureFlashcard: Flashcard.fromFolderName(flashcardData.folderName))));
   }
 }

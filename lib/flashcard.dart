@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'dart:developer' as dev;
+import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
 
 class Flashcard {
@@ -16,7 +17,7 @@ class Flashcard {
         author = "Unknown",
         frontSideName = "Default",
         backSideName = "Default",
-        cards = List<FlashcardElement>.empty();
+        cards = List<FlashcardElement>.from({FlashcardElement(frontSide: "", backSide: "")});
 
   static bool isFlashcard(String fileContent) {
     late dynamic content;
@@ -34,8 +35,7 @@ class Flashcard {
 
     if (content['cardboards'] is! List) return false;
 
-    if (!content['cardboards']
-        .every((element) => FlashcardElement.isFlashcardElement(element))) {
+    if (!content['cardboards'].every((element) => FlashcardElement.isFlashcardElement(element))) {
       return false;
     }
 
@@ -70,8 +70,7 @@ class Flashcard {
     backSideName = jsonObject['sideName']['back'];
     dev.log(jsonObject['cardboards'].toString());
     cards = (jsonObject['cardboards'] as List<dynamic>)
-        .map((element) => FlashcardElement(
-            frontSide: element['front'], backSide: element['back']))
+        .map((element) => FlashcardElement(frontSide: element['front'], backSide: element['back']))
         .toList(growable: false);
   }
 }
