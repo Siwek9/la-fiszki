@@ -1,15 +1,17 @@
+import 'dart:developer' as dev;
+
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/pages/flashcard_screen.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
-import 'dart:developer' as dev;
 
 class FlashcardSummary extends StatelessWidget {
-  const FlashcardSummary({super.key, required this.knownFlashcards, required this.dontKnownFlashcards, required this.folderName});
-
   final List<FlashcardElement> knownFlashcards;
+
   final List<FlashcardElement> dontKnownFlashcards;
   final String folderName;
+  const FlashcardSummary(
+      {super.key, required this.knownFlashcards, required this.dontKnownFlashcards, required this.folderName});
   // final List<FlashcardElement> wholeFlashcard;
 
   @override
@@ -22,60 +24,63 @@ class FlashcardSummary extends StatelessWidget {
           child: Column(
             children: [
               Card(
-                child: Builder(builder: (context) {
-                  if (dontKnownFlashcards.isEmpty) {
-                    return Text("Umiesz już wszystko!\nCzy chcesz rozwiązać je jeszcze raz?");
-                  } else {
-                    // Navigator siema = Navigator.;
-                    return Text("Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${dontKnownFlashcards.length} do nauki\nCzy kontynuować naukę?");
-                  }
-                }),
+                child: SummaryDifference(
+                    requirement: dontKnownFlashcards.isEmpty,
+                    whenFlashcardFinished: Text("Umiesz już wszystko!\nCzy chcesz rozwiązać je jeszcze raz?"),
+                    whenFlashcardNotComplete: Text(
+                        "Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${dontKnownFlashcards.length} do nauki\nCzy kontynuować naukę?")),
               ),
-              ElevatedButton(onPressed: () {
-                if (dontKnownFlashcards.isEmpty) {
-                  Navigator.of(context)
-                    ..pop()
-                    ..push(MaterialPageRoute(
-                        builder: (context) => FutureBuilder(
-                            future: Flashcard.fromFolderName(folderName),
-                            builder: (context, snapshot) {
-                              dev.log("Zmienna: $folderName");
-                              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-                                return FlashcardScreen(folderName: folderName, cards: snapshot.data!.cards);
-                              } else {
-                                return LoadingScreen.wholeScreen();
-                              }
-                            })));
-                } else {
-                  Navigator.of(context)
-                    ..pop()
-                    ..push(MaterialPageRoute(builder: (context) => FlashcardScreen(folderName: folderName, cards: dontKnownFlashcards)));
-                }
-              }, child: Builder(builder: (context) {
-                if (dontKnownFlashcards.isEmpty) {
-                  return Text("Rozpocznij naukę od początku");
-                } else {
-                  return Text("Kontynuuj naukę");
-                }
-              })),
-              ElevatedButton(
-                  onPressed: () {
-                    if (dontKnownFlashcards.isNotEmpty) {
+              SummaryDifference(
+                  requirement: dontKnownFlashcards.isEmpty,
+                  whenFlashcardFinished: ElevatedButton(
+                      onPressed: () => openFlashcardFromStart(context), child: Text("Rozpocznij naukę od początku")),
+                  whenFlashcardNotComplete:
+                      ElevatedButton(onPressed: () => openFlashcardAgain(context), child: Text("Kontynuuj naukę"))),
+              SummaryDifference(
+                requirement: dontKnownFlashcards.isEmpty,
+                whenFlashcardFinished: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text("Wróć do menu głównego")),
+                whenFlashcardNotComplete: ElevatedButton(
+                    onPressed: () {
                       preventFromLosingProgress(context).then((value) {
                         if (value == true) {
                           Navigator.pop(context);
                         }
                       });
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text("Wróć do menu głównego")),
+                    },
+                    child: Text("Wróć do menu głównego")),
+              ),
             ],
           ),
         ),
       )),
     );
+  }
+
+  void openFlashcardAgain(BuildContext context) {
+    Navigator.of(context)
+      ..pop()
+      ..push(
+          MaterialPageRoute(builder: (context) => FlashcardScreen(folderName: folderName, cards: dontKnownFlashcards)));
+  }
+
+  void openFlashcardFromStart(BuildContext context) {
+    Navigator.of(context)
+      ..pop()
+      ..push(MaterialPageRoute(
+          builder: (context) => FutureBuilder(
+              future: Flashcard.fromFolderName(folderName),
+              builder: (context, snapshot) {
+                dev.log("Zmienna: $folderName");
+                if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                  return FlashcardScreen(folderName: folderName, cards: snapshot.data!.cards);
+                } else {
+                  return LoadingScreen.wholeScreen();
+                }
+              })));
   }
 
   Future<bool> preventFromLosingProgress(BuildContext context) async {
@@ -99,5 +104,29 @@ class FlashcardSummary extends StatelessWidget {
       },
     );
     return shouldPop ?? false;
+  }
+}
+
+class SummaryDifference extends StatelessWidget {
+  final bool requirement;
+
+  final Widget whenFlashcardFinished;
+  final Widget whenFlashcardNotComplete;
+  const SummaryDifference({
+    super.key,
+    required this.requirement,
+    required this.whenFlashcardFinished,
+    required this.whenFlashcardNotComplete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(builder: (context) {
+      if (requirement) {
+        return whenFlashcardFinished;
+      } else {
+        return whenFlashcardNotComplete;
+      }
+    });
   }
 }

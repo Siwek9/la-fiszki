@@ -4,16 +4,12 @@ import 'dart:io';
 import 'package:la_fiszki/flashcards_storage.dart';
 
 class Catalogue {
-  // static const file = getFile();
-
   static Future<File> getFile() async {
-    var flashcardsPath =
-        (await FlashcardsStorage.getFlashcardsMainDirectory()).path;
+    var flashcardsPath = (await FlashcardsStorage.getFlashcardsMainDirectory()).path;
     return File("${flashcardsPath}catalogue.json");
   }
 
-  static Map<String, Map<String, dynamic>> createCatalogueElement(
-      {required String folderName, required var json}) {
+  static Map<String, Map<String, dynamic>> createCatalogueElement({required String folderName, required var json}) {
     return {
       folderName: {'name': json["name"] ?? ""}
     };
@@ -34,7 +30,7 @@ class Catalogue {
 
   static bool isCatalogueElement(element) {
     dev.log(element.runtimeType.toString());
-    return element.runtimeType is Map<String, dynamic>;
+    return element is Map<String, dynamic>;
   }
 }
 

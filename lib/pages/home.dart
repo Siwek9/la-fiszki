@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-// import 'dart:js_util';
-import 'dart:math';
-import 'dart:developer' as dev;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/flashcards_storage.dart';
 
-import '../flashcards_storage.dart';
+// import 'dart:developer' as dev;
 
 class Home extends StatelessWidget {
   const Home({
@@ -24,7 +22,7 @@ class Home extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset("assets/images/logo.png"),
-          HomePageButton(nextPage: ChooseFlashcards(), text: "Otwórz fiszke"),
+          NewPageButton(nextPage: ChooseFlashcards(), text: "Otwórz fiszke"),
           ElevatedButton(
             onPressed: importFlashcardFromFile,
             style: ButtonStyle(
@@ -55,47 +53,18 @@ class Home extends StatelessWidget {
 
     String fileContent = await filePicked.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) return;
+    var flashcardFolderName = await FlashcardsStorage.addNewFlashcard(fileContent);
 
-    var flashcardsMainDir =
-        await FlashcardsStorage.getFlashcardsMainDirectory();
-
-    var folderName = "";
-    late Directory newFlashcardDir;
-    do {
-      folderName = randomFolderName();
-      newFlashcardDir = Directory("${flashcardsMainDir.path}$folderName/");
-    } while (await newFlashcardDir.exists());
-
-    File newFlashcardFile = File("${newFlashcardDir.path}raw.json");
-    await newFlashcardFile.create(recursive: true);
-    fileContent = jsonEncode(jsonDecode(fileContent)); // compress the data
-    await newFlashcardFile.writeAsString(fileContent);
-
-    var catalogueObject = Catalogue.createCatalogueElement(
-        folderName: folderName, json: jsonDecode(fileContent));
-
+    var catalogueObject =
+        Catalogue.createCatalogueElement(folderName: flashcardFolderName, json: jsonDecode(fileContent));
     await Catalogue.addElement(catalogueObject);
-    // var catalogue = await FlashcardsStorage.getCatalogue();
-
-    // List<dynamic> catalogueJsonObject = jsonDecode(await catalogue.readAsString()) ?? List<dynamic>.empty();
-    // catalogueJsonObject.add(catalogueObject);
-    // await catalogue.writeAsString(jsonEncode(catalogueJsonObject));
-    dev.log("nice");
-  }
-
-  String randomFolderName() {
-    var rand = Random();
-    const chars =
-        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(20, (index) => chars[rand.nextInt(chars.length)])
-        .join();
   }
 }
 
-class HomePageButton extends StatelessWidget {
+class NewPageButton extends StatelessWidget {
   final Widget nextPage;
   final String? text;
-  const HomePageButton({super.key, required this.nextPage, this.text});
+  const NewPageButton({super.key, required this.nextPage, this.text});
 
   @override
   Widget build(BuildContext context) {
