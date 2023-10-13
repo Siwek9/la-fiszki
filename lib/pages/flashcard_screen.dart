@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/pages/flashcard_summary.dart';
 
+import 'dart:developer' as dev;
+
 class FlashcardScreen extends StatefulWidget {
   const FlashcardScreen({super.key, required this.cards, required this.folderName});
   final List<FlashcardElement> cards;
@@ -21,35 +23,61 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(children: [
-        Text("$cardNow/${widget.cards.length}"),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              sideNow = !sideNow;
-            });
-          },
-          child: Card(
-            child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+    return WillPopScope(
+      onWillPop: () => preventFromLosingProgress(context),
+      child: Scaffold(
+        body: Column(children: [
+          Text("$cardNow/${widget.cards.length}"),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                sideNow = !sideNow;
+              });
+            },
+            child: Card(
+              child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+            ),
           ),
-        ),
-        Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  whenUserDontKnow(widget.cards[cardNow]);
-                },
-                child: Text("Nie Wiem")),
-            ElevatedButton(
-                onPressed: () {
-                  whenUserKnow(widget.cards[cardNow]);
-                },
-                child: Text("Wiem"))
-          ],
-        )
-      ]),
+          Row(
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    whenUserDontKnow(widget.cards[cardNow]);
+                  },
+                  child: Text("Nie Wiem")),
+              ElevatedButton(
+                  onPressed: () {
+                    whenUserKnow(widget.cards[cardNow]);
+                  },
+                  child: Text("Wiem"))
+            ],
+          )
+        ]),
+      ),
     );
+  }
+
+  Future<bool> preventFromLosingProgress(BuildContext context) async {
+    final shouldPop = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Fiszki'),
+          content: Text('Postępy w tej sesji fiszek nie zostaną zapisane. Czy na pewno chcesz wyjść?'),
+          actions: [
+            TextButton(
+              child: Text('Anuluj'),
+              onPressed: () => Navigator.pop(context, false),
+            ),
+            TextButton(
+              child: Text('Potwierdź'),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+          ],
+        );
+      },
+    );
+    return shouldPop ?? false;
   }
 
   void whenUserKnow(FlashcardElement card) {

@@ -12,22 +12,18 @@ class FlashcardsStorage {
     if (!await flashcardsDirectory.exists()) {
       flashcardsDirectory = await flashcardsDirectory.create(recursive: true);
     }
-    var flashcardsFileSystemEntityList =
-        flashcardsDirectory.listSync().toList(growable: false);
+    var flashcardsFileSystemEntityList = flashcardsDirectory.listSync().toList(growable: false);
 
     List<dynamic> catalogueContent = await Catalogue.getContent();
 
-    var flashcardsDirectories = flashcardsFileSystemEntityList
-        .where((flashcardFile) => catalogueContent.any((element) =>
-            // Catalogue.isCatalogueElement(element) &&
-            element.keys.contains(basename(flashcardFile.path))));
+    var flashcardsDirectories = flashcardsFileSystemEntityList.where((flashcardFile) => catalogueContent.any((element) =>
+        // Catalogue.isCatalogueElement(element) &&
+        element.keys.contains(basename(flashcardFile.path))));
 
     // String directoryName;
     var flashcardsData = flashcardsDirectories
         .map((e) => CatalogueElement(
-            name: catalogueContent.firstWhere((content) =>
-                    content.keys.contains(basename(e.path)))[basename(e.path)]
-                ['name'] as String,
+            name: catalogueContent.firstWhere((content) => content.keys.contains(basename(e.path)))[basename(e.path)]['name'] as String,
             folderName: basename(e.path)))
         .toList();
     dev.log("siema");
@@ -55,8 +51,7 @@ class FlashcardsStorage {
 
     // while (!isFutureDone) {}
     var documentDir = await getApplicationDocumentsDirectory();
-    _flashcardStorageDirectory =
-        Directory("${documentDir.path}/la_fiszki/flashcards/");
+    _flashcardStorageDirectory = Directory("${documentDir.path}/la_fiszki/flashcards/");
     return _flashcardStorageDirectory ?? Directory("");
     //  = documentDirectory;
     // return flashcardStorageDirectory ?? Directory("");
