@@ -19,18 +19,20 @@ class FlashcardSelectButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () {
-          moveToFlashCard(context, flashcardData);
-        },
-        style: ButtonStyle(
+    return Container(
+      decoration:
+          BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.background, width: 2))),
+      child: FilledButton(
+          onPressed: () {
+            moveToFlashCard(context, flashcardData);
+          },
+          style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(borderRadius: BorderRadius.zero, side: BorderSide(color: Colors.blue.shade600))),
-            fixedSize: MaterialStateProperty.all(Size(250.0, 70.0)),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            backgroundColor: MaterialStateProperty.all(Colors.blue),
-            foregroundColor: MaterialStateProperty.all(Colors.black)),
-        child: Text(flashcardData.name));
+                RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+            fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width, 80.0)),
+          ),
+          child: Text(flashcardData.name, style: TextStyle(fontSize: 20))),
+    );
   }
 
   void moveToFlashCard(BuildContext context, CatalogueElement flashcardData) {
@@ -49,26 +51,16 @@ class FlashcardsLoaded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Center(
-        child: Column(
-          children: [
-            Card(
-                shadowColor: Colors.black,
-                elevation: 20.0,
-                margin: EdgeInsets.all(10.0),
-                color: Colors.blue.shade300,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                      children: flashcardsData
-                          .map((flashcardData) => FlashcardSelectButton(flashcardData: flashcardData))
-                          .toList()),
-                )),
-          ],
-        ),
-      ),
+    return RefreshIndicator(
+      onRefresh: _refreshFlashcards,
+      child: ListView.builder(
+          itemCount: flashcardsData.length,
+          itemBuilder: (context, index) => FlashcardSelectButton(flashcardData: flashcardsData[index])),
     );
+  }
+
+  Future<void> _refreshFlashcards() async {
+    return Future.delayed(Duration(seconds: 5));
   }
 }
 
@@ -78,7 +70,11 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
   @override
   Widget build(Object context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        appBar: AppBar(title: Text("Wybierz fiszkę"), centerTitle: true, actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(onTap: _refreshFlashcard, child: Icon(Icons.refresh)))
+        ]),
         body: FutureBuilder(
             future: _getFlashcardsData,
             builder: (context, snapshot) {
@@ -87,7 +83,7 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
                   flashcardsData: snapshot.data!,
                 );
               } else {
-                return LoadingScreen.wholeScreen();
+                return LoadingScreen.wholeScreen(context);
               }
             }));
   }
@@ -97,4 +93,6 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
     super.initState();
     _getFlashcardsData = FlashcardsStorage.getFlashcardsDataList();
   }
+
+  void _refreshFlashcard() {}
 }

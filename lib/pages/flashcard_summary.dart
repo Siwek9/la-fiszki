@@ -78,7 +78,7 @@ class FlashcardSummary extends StatelessWidget {
                 if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
                   return FlashcardScreen(folderName: folderName, cards: snapshot.data!.cards);
                 } else {
-                  return LoadingScreen.wholeScreen();
+                  return LoadingScreen.wholeScreen(context);
                 }
               })));
   }

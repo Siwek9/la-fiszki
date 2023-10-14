@@ -21,20 +21,26 @@ class Home extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset("assets/images/logo.png"),
+          Container(
+            height: MediaQuery.of(context).size.height / 2,
+            alignment: Alignment.center,
+            child: Image.asset("assets/images/logo.png"),
+          ),
           NewPageButton(nextPage: ChooseFlashcards(), text: "Otwórz fiszke"),
           ElevatedButton(
-            onPressed: importFlashcardFromFile,
             style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
+              // backgroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.primary),
+              // foregroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.onPrimary),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+              fixedSize: MaterialStateProperty.all(
+                  Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height / 6)),
             ),
-            child: Text("Importuj fiszke",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
-                  // backgroundColor: Colors.green
-                )),
-          ),
+
+            // foregroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.onTertiary)),
+            onPressed: importFlashcardFromFile,
+            child: Text("Importuj fiszke", style: TextStyle(fontSize: MediaQuery.of(context).size.width / 13)),
+          )
           // HomePageButton(
           //   nextPage: CreateCardboard(),
           //   text: "Stwórz fiszke"
@@ -45,7 +51,7 @@ class Home extends StatelessWidget {
   }
 
   void importFlashcardFromFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
     if (result == null) return;
 
     File filePicked = File(result.files.single.path ?? "");
@@ -68,7 +74,14 @@ class NewPageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return FilledButton(
+      style: ButtonStyle(
+          // backgroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.primary),
+          // foregroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.onPrimary),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+          fixedSize: MaterialStateProperty.all(
+              Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height / 3))),
       onPressed: () {
         Navigator.push(
             context,
@@ -76,15 +89,7 @@ class NewPageButton extends StatelessWidget {
               builder: (context) => nextPage,
             ));
       },
-      style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(Colors.green[800]),
-      ),
-      child: Text(text ?? "",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-            // backgroundColor: Colors.green
-          )),
+      child: Text(text ?? "", style: TextStyle(fontSize: MediaQuery.of(context).size.width / 13)),
     );
   }
 }
