@@ -26,16 +26,27 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("$cardNow/${widget.cards.length}"),
+        ),
         body: Column(children: [
-          Text("$cardNow/${widget.cards.length}"),
-          ElevatedButton(
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               setState(() {
                 sideNow = !sideNow;
               });
             },
-            child: Card(
-              child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  color: Colors.green,
+                  child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+                ),
+              ),
             ),
           ),
           Row(

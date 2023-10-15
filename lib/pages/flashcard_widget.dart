@@ -3,7 +3,7 @@ import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/pages/flashcard_screen.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
-import 'dart:developer' as dev;
+// import 'dart:developer' as dev;
 
 class FlashcardWidget extends StatelessWidget {
   final Future<Flashcard> futureFlashcard;
@@ -50,7 +50,7 @@ class FlashcardContentWidget extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           child: ListView.builder(
-              itemCount: content.cards.length,
+              itemCount: content.cards.length + 2,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return FlashcardInfo(content: content);
