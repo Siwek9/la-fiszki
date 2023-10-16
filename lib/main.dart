@@ -19,7 +19,7 @@ class LaFiszki extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.light),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, brightness: Brightness.light),
       ),
       home: FutureBuilder(
           future: initApp(),

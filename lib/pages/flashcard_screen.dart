@@ -30,40 +30,42 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
           centerTitle: true,
           title: Text("$cardNow/${widget.cards.length}"),
         ),
-        body: Column(children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                sideNow = !sideNow;
-              });
-            },
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  color: Colors.green,
-                  child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+        body: LayoutBuilder(builder: (context, BoxConstraints constraints) {
+          return Column(children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  sideNow = !sideNow;
+                });
+              },
+              child: SizedBox(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight / 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    color: Colors.green,
+                    child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+                  ),
                 ),
               ),
             ),
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    whenUserDontKnow(widget.cards[cardNow]);
-                  },
-                  child: Text("Nie Wiem")),
-              ElevatedButton(
-                  onPressed: () {
-                    whenUserKnow(widget.cards[cardNow]);
-                  },
-                  child: Text("Wiem"))
-            ],
-          )
-        ]),
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      whenUserDontKnow(widget.cards[cardNow]);
+                    },
+                    child: Text("Nie Wiem")),
+                ElevatedButton(
+                    onPressed: () {
+                      whenUserKnow(widget.cards[cardNow]);
+                    },
+                    child: Text("Wiem"))
+              ],
+            )
+          ]);
+        }),
       ),
     );
   }

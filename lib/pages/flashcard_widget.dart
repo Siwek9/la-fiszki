@@ -70,11 +70,22 @@ class FlashcardContentWidget extends StatelessWidget {
                 } else {
                   index -= 3;
                   return CompareElements(
-                    left:
-                        Text(content.cards[index].frontSide, maxLines: 1, style: Theme.of(context).textTheme.bodyLarge),
-                    right:
-                        Text(content.cards[index].backSide, maxLines: 1, style: Theme.of(context).textTheme.bodyLarge),
-                    compare: Icon(Icons.arrow_forward_sharp),
+                    left: Text(content.cards[index].frontSide,
+                        maxLines: 1,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+                    right: Text(content.cards[index].backSide,
+                        maxLines: 1,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+                    compare: Icon(
+                      Icons.arrow_forward_sharp,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   );
                 }
               }),
@@ -102,7 +113,7 @@ class StartStudyingButton extends StatelessWidget {
     return Container(
         margin: EdgeInsets.only(bottom: 5.0),
         child: ElevatedButton.icon(
-          icon: Icon(Icons.play_circle),
+          icon: Icon(Icons.play_circle, color: Theme.of(context).colorScheme.onPrimary),
           onPressed: onPressed,
           style: ButtonStyle(
               shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero))),
@@ -110,7 +121,9 @@ class StartStudyingButton extends StatelessWidget {
               foregroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.onBackground),
               iconSize: MaterialStatePropertyAll(50),
               padding: MaterialStatePropertyAll(EdgeInsets.all(20))),
-          label: Text("Rozpocznij naukę", style: Theme.of(context).textTheme.headlineSmall),
+          label: Text("Rozpocznij naukę",
+              style:
+                  Theme.of(context).textTheme.headlineSmall!.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
         ));
   }
 }
@@ -174,10 +187,15 @@ class TitleAndContent extends StatelessWidget {
         children: <Widget>[
           Text(title,
               textAlign: TextAlign.left,
-              style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold)),
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge!
+                  .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
           Text(
             content,
-            style: Theme.of(context).textTheme.headlineMedium,
+            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
           )
         ],
       ),
@@ -199,12 +217,6 @@ class CompareElements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Flex(
-    //   // clipBehavior: Clip.antiAliasWithSaveLayer,
-    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //   direction: Axis.horizontal,
-    //   children: [left, compare, right],
-    // );
     return Container(
       margin: EdgeInsets.only(bottom: 5.0),
       padding: EdgeInsets.all(20.0),
@@ -220,13 +232,5 @@ class CompareElements extends StatelessWidget {
         ],
       ),
     );
-    // return ListTile(
-    //   title: Icon(Icons.arrow_forward_sharp),
-
-    //   // titleAlignment: ListTileTitleAlignment.center,
-    //   leading: Text(content.cards[index].frontSide),
-    //   trailing: Text(content.cards[index].backSide),
-    //   leadingAndTrailingTextStyle: Theme.of(context).textTheme.bodyLarge,
-    // );
   }
 }
