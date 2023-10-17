@@ -44,24 +44,53 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
-                    color: Colors.green,
-                    child: Text(sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide),
+                    color: Theme.of(context).colorScheme.primary,
+                    child: Center(
+                      child: Text(
+                        sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-            Row(
+            Flex(
+              direction: Axis.horizontal,
               children: [
-                ElevatedButton(
-                    onPressed: () {
-                      whenUserDontKnow(widget.cards[cardNow]);
-                    },
-                    child: Text("Nie Wiem")),
-                ElevatedButton(
-                    onPressed: () {
-                      whenUserKnow(widget.cards[cardNow]);
-                    },
-                    child: Text("Wiem"))
+                Expanded(
+                  child: SizedBox(
+                    height: constraints.maxHeight / 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        whenUserKnow(widget.cards[cardNow]);
+                      },
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.green)),
+                      child: Text(
+                        "Wiem",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: constraints.maxHeight / 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        whenUserDontKnow(widget.cards[cardNow]);
+                      },
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                      child: Text(
+                        "Nie Wiem",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             )
           ]);
@@ -108,6 +137,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     }
     setState(() {
       cardNow++;
+      sideNow = false;
     });
   }
 
@@ -126,6 +156,7 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     }
     setState(() {
       cardNow++;
+      sideNow = false;
     });
   }
 }

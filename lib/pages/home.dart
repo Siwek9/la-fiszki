@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
@@ -24,57 +24,40 @@ class Home extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Stack(
-                children: <Widget>[
-                  Image.asset("assets/images/logo.png",
-                      width: constraints.maxWidth - 25, height: constraints.maxHeight / 2 - 25, fit: BoxFit.cover),
-                  ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: ShaderMask(
-                        shaderCallback: (rect) {
-                          return RadialGradient(colors: <Color>[
-                            Colors.black,
-                            Colors.black.withOpacity(0),
-                          ], stops: [
-                            0.9,
-                            1
-                          ]).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstOut,
-                        child: Image.asset("assets/images/logo.png",
-                            width: constraints.maxWidth - 25,
-                            height: constraints.maxHeight / 2 - 25,
-                            fit: BoxFit.cover),
-                      ))
-                ],
-              ),
-              // Container(
-              //   height: constraints.maxHeight / 2,
-              //   alignment: Alignment.center,
-              //   child: ShaderMask(
-              //     shaderCallback: (rect) {
-              //       return RadialGradient(colors: <Color>[
-              //         Colors.black.withOpacity(1.0),
-              //         Colors.black.withOpacity(1.0),
-              //         // Colors.black.withOpacity(0.3),
-              //         Colors.black.withOpacity(1.0)
-              //       ], stops: [
-              //         0.0,
-              //         0.5,
-              //         // 0.55,
-              //         1.0
-              //       ]).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-              //     },
-              //     blendMode: BlendMode.dstIn,
-              //     child: Image.asset(
-              //       "assets/images/logo.png",
-              //       width: constraints.maxWidth - 25,
-              //       height: constraints.maxHeight / 2 - 25,
-              //       fit: BoxFit.cover,
-              //     ),
-              //   ),
+              // Stack(
+              //   children: <Widget>[
+              //     Image.asset("assets/images/logo.png",
+              //         width: constraints.maxWidth - 25, height: constraints.maxHeight / 2 - 25, fit: BoxFit.cover),
+              //     ImageFiltered(
+              //         imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              //         child: ShaderMask(
+              //           shaderCallback: (rect) {
+              //             return RadialGradient(colors: <Color>[
+              //               Colors.black,
+              //               Colors.black.withOpacity(0),
+              //             ], stops: [
+              //               0.9,
+              //               1
+              //             ]).createShader(rect);
+              //           },
+              //           blendMode: BlendMode.dstOut,
+              //           child: Image.asset("assets/images/logo.png",
+              //               width: constraints.maxWidth - 25,
+              //               height: constraints.maxHeight / 2 - 25,
+              //               fit: BoxFit.cover),
+              //         ))
+              //   ],
               // ),
-              // BackdropFilter(filter: ImageFilter.blur(), child:),
+              Container(
+                height: constraints.maxHeight / 2,
+                alignment: Alignment.center,
+                child: Image.asset(
+                  "assets/images/logo.png",
+                  width: constraints.maxWidth - 25,
+                  height: constraints.maxHeight / 2 - 25,
+                  fit: BoxFit.cover,
+                ),
+              ),
               NewPageButton(
                 nextPage: ChooseFlashcards(),
                 text: "Otwórz fiszke",
