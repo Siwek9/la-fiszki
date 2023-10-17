@@ -50,7 +50,7 @@ class FlashcardContentWidget extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           child: ListView.builder(
-              itemCount: content.cards.length + 2,
+              itemCount: content.cards.length + 3,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return FlashcardInfo(content: content);
@@ -97,6 +97,7 @@ class FlashcardContentWidget extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => FlashcardScreen(
+                  flashcardData: content,
                   cards: content.cards,
                   folderName: folderName,
                 )));

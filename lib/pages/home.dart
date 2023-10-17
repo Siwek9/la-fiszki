@@ -24,30 +24,6 @@ class Home extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Stack(
-              //   children: <Widget>[
-              //     Image.asset("assets/images/logo.png",
-              //         width: constraints.maxWidth - 25, height: constraints.maxHeight / 2 - 25, fit: BoxFit.cover),
-              //     ImageFiltered(
-              //         imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              //         child: ShaderMask(
-              //           shaderCallback: (rect) {
-              //             return RadialGradient(colors: <Color>[
-              //               Colors.black,
-              //               Colors.black.withOpacity(0),
-              //             ], stops: [
-              //               0.9,
-              //               1
-              //             ]).createShader(rect);
-              //           },
-              //           blendMode: BlendMode.dstOut,
-              //           child: Image.asset("assets/images/logo.png",
-              //               width: constraints.maxWidth - 25,
-              //               height: constraints.maxHeight / 2 - 25,
-              //               fit: BoxFit.cover),
-              //         ))
-              //   ],
-              // ),
               Container(
                 height: constraints.maxHeight / 2,
                 alignment: Alignment.center,

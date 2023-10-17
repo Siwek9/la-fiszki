@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:la_fiszki/flashcards_storage.dart';
+
+// import 'dart:developer' as dev;
 
 class Catalogue {
   static Future<File> getFile() async {
@@ -29,7 +30,6 @@ class Catalogue {
   }
 
   static bool isCatalogueElement(element) {
-    dev.log(element.runtimeType.toString());
     return element is Map<String, dynamic>;
   }
 }

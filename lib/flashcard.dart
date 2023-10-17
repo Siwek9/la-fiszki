@@ -44,7 +44,6 @@ class Flashcard {
 
   static Future<Flashcard> fromFolderName(String folderName) async {
     var flashcard = Flashcard._empty();
-    dev.log("siema");
     await flashcard.asyncInit(folderName).catchError((Object error) {
       dev.log(error.toString());
     });
@@ -68,7 +67,6 @@ class Flashcard {
     author = jsonObject['author'];
     frontSideName = jsonObject['sideName']['front'];
     backSideName = jsonObject['sideName']['back'];
-    dev.log(jsonObject['cardboards'].toString());
     cards = (jsonObject['cardboards'] as List<dynamic>)
         .map((element) => FlashcardElement(frontSide: element['front'], backSide: element['back']))
         .toList(growable: false);

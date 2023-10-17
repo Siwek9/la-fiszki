@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:math';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+// import 'dart:developer' as dev;
 
 class FlashcardsStorage {
   static Directory? _flashcardStorageDirectory;
@@ -27,9 +28,6 @@ class FlashcardsStorage {
                 ['name'] as String,
             folderName: basename(e.path)))
         .toList();
-    dev.log("siema");
-
-    dev.log(flashcardsData.map((e) => e.name).toString());
     return flashcardsData;
   }
 
