@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
@@ -8,8 +7,9 @@ import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-// import 'dart:developer' as dev;
+import 'dart:developer' as dev;
 
 class Home extends StatelessWidget {
   const Home({
@@ -25,15 +25,35 @@ class Home extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: constraints.maxHeight / 2,
+                height: constraints.maxHeight / 2 - 50,
                 alignment: Alignment.center,
-                child: Image.asset(
-                  "assets/images/logo.png",
-                  width: constraints.maxWidth - 25,
-                  height: constraints.maxHeight / 2 - 25,
-                  fit: BoxFit.cover,
-                ),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return Image.asset(
+                    "assets/images/logo.png",
+                    width: constraints.maxWidth - 25,
+                    height: constraints.maxHeight - 25,
+                    fit: BoxFit.cover,
+                  );
+                }),
               ),
+              SizedBox(
+                  height: 50,
+                  width: constraints.maxWidth,
+                  child: FilledButton(
+                    onPressed: () async {
+                      final url = Uri.parse('https:siwek9.github.io/la-fiszki-website');
+                      if (await canLaunchUrl(url)) {
+                        dev.log("seks");
+                        launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                        foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSecondary),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
+                    child: Text("Stwórz fiszkę (Strona Internetowa)"),
+                  )),
+              // Text("Stwórz fiszke"),
               NewPageButton(
                 nextPage: ChooseFlashcards(),
                 text: "Otwórz fiszke",
@@ -47,7 +67,7 @@ class Home extends StatelessWidget {
                 ),
                 onPressed: importFlashcardFromFile,
                 child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
-              )
+              ),
               // HomePageButton(
               //   nextPage: CreateCardboard(),
               //   text: "Stwórz fiszke"

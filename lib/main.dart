@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/pages/home.dart';
-// import 'package:la_fiszki/flashcards_storage.dart';
 
 // import 'dart:developer' as dev;
 
@@ -35,7 +34,6 @@ class LaFiszki extends StatelessWidget {
   }
 
   Future<void> initApp() async {
-    // var flashcardsDir = await FlashcardsStorage.getFlashcardsMainDirectory();
     File catalogue = await Catalogue.getFile();
 
     // TODO Remove before release
