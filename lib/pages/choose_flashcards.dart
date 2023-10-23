@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
@@ -47,25 +48,26 @@ class FlashcardSelectButton extends StatelessWidget {
 
 class FlashcardsLoaded extends StatelessWidget {
   final List<CatalogueElement> flashcardsData;
-  const FlashcardsLoaded({super.key, required this.flashcardsData});
+  final AsyncCallback onRefresh;
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
+  const FlashcardsLoaded(
+      {super.key, required this.flashcardsData, required this.onRefresh, required this.refreshIndicatorKey});
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: _refreshFlashcards,
+      key: refreshIndicatorKey,
+      onRefresh: onRefresh,
       child: ListView.builder(
           itemCount: flashcardsData.length,
           itemBuilder: (context, index) => FlashcardSelectButton(flashcardData: flashcardsData[index])),
     );
   }
-
-  Future<void> _refreshFlashcards() async {
-    return Future.delayed(Duration(seconds: 5));
-  }
 }
 
 class _ChooseFlashcardsState extends State<ChooseFlashcards> {
   late Future<List<CatalogueElement>> _getFlashcardsData;
+  late GlobalKey<RefreshIndicatorState> refreshIndicator;
 
   @override
   Widget build(Object context) {
@@ -73,14 +75,21 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
         appBar: AppBar(title: Text("Wybierz fiszkę"), centerTitle: true, actions: <Widget>[
           Padding(
               padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(onTap: _refreshFlashcard, child: Icon(Icons.refresh)))
+              child: GestureDetector(
+                  onTap: () {
+                    refreshIndicator.currentState?.show();
+                  },
+                  child: Icon(Icons.refresh)))
         ]),
         body: FutureBuilder(
             future: _getFlashcardsData,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                refreshIndicator = GlobalKey<RefreshIndicatorState>();
                 return FlashcardsLoaded(
+                  refreshIndicatorKey: refreshIndicator,
                   flashcardsData: snapshot.data!,
+                  onRefresh: _refreshFlashcard,
                 );
               } else {
                 return LoadingScreen.wholeScreen(context);
@@ -94,5 +103,11 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
     _getFlashcardsData = FlashcardsStorage.getFlashcardsDataList();
   }
 
-  void _refreshFlashcard() {}
+  Future<void> _refreshFlashcard() async {
+    await Catalogue.refreshFile();
+    var newFlashcardData = await FlashcardsStorage.getFlashcardsDataList();
+    setState(() {
+      _getFlashcardsData = SynchronousFuture(newFlashcardData);
+    });
+  }
 }

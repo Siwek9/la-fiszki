@@ -15,20 +15,19 @@ class FlashcardsStorage {
     if (!await flashcardsDirectory.exists()) {
       flashcardsDirectory = await flashcardsDirectory.create(recursive: true);
     }
-    var flashcardsFileSystemEntityList = flashcardsDirectory.listSync().toList(growable: false);
+    // var flashcardsFileSystemEntityList = flashcardsDirectory.listSync().toList(growable: false);
 
-    List<dynamic> catalogueContent = await Catalogue.getContent();
+    List<CatalogueElement> catalogueContent = await Catalogue.getContent();
 
-    var flashcardsDirectories = flashcardsFileSystemEntityList.where((flashcardFile) => catalogueContent.any(
-        (element) => Catalogue.isCatalogueElement(element) && element.keys.contains(basename(flashcardFile.path))));
+    // var flashcardsDirectories = flashcardsFileSystemEntityList.where((flashcardFile) => catalogueContent
+    //     .any((element) => Catalogue.isCatalogueElement(element) && element.folderName == basename(flashcardFile.path)));
 
-    var flashcardsData = flashcardsDirectories
-        .map((e) => CatalogueElement(
-            name: catalogueContent.firstWhere((content) => content.keys.contains(basename(e.path)))[basename(e.path)]
-                ['name'] as String,
-            folderName: basename(e.path)))
-        .toList();
-    return flashcardsData;
+    // var flashcardsData = flashcardsDirectories
+    //     .map((e) => CatalogueElement(
+    //         name: catalogueContent.firstWhere((content) => content.folderName == (basename(e.path))).name,
+    //         folderName: basename(e.path)))
+    //     .toList();
+    return catalogueContent;
   }
 
   static Future<Directory> getFlashcardsMainDirectory() async {
