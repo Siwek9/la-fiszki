@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 // import 'dart:developer' as dev;

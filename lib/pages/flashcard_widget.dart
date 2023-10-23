@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/pages/flashcard_screen.dart';
@@ -93,12 +95,15 @@ class FlashcardContentWidget extends StatelessWidget {
   }
 
   void startStudying(BuildContext context) {
+    Random random = Random();
+    var shuffleCards = List<FlashcardElement>.from(content.cards);
+    shuffleCards.shuffle(random);
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => FlashcardScreen(
                   flashcardData: content,
-                  cards: content.cards,
+                  cards: shuffleCards,
                   folderName: folderName,
                 )));
   }

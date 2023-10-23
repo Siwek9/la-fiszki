@@ -1,6 +1,8 @@
 // import 'dart:developer' as dev;
 // import 'dart:io';
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:la_fiszki/flashcard.dart';
@@ -159,12 +161,15 @@ class FlashcardSummary extends StatelessWidget {
   }
 
   void openFlashcardAgain(BuildContext context) {
+    Random random = Random();
+    var shuffleCards = List<FlashcardElement>.from(dontKnownFlashcards);
+    shuffleCards.shuffle(random);
     Navigator.of(context)
       ..pop()
       ..push(MaterialPageRoute(
           builder: (context) => FlashcardScreen(
                 folderName: folderName,
-                cards: dontKnownFlashcards,
+                cards: shuffleCards,
                 flashcardData: flashcardData,
               )));
   }
@@ -177,9 +182,12 @@ class FlashcardSummary extends StatelessWidget {
               future: Flashcard.fromFolderName(folderName),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                  Random random = Random();
+                  var shuffleCards = List<FlashcardElement>.from(snapshot.data!.cards);
+                  shuffleCards.shuffle(random);
                   return FlashcardScreen(
                     folderName: folderName,
-                    cards: snapshot.data!.cards,
+                    cards: shuffleCards,
                     flashcardData: snapshot.data!,
                   );
                 } else {
