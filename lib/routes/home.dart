@@ -38,7 +38,10 @@ class Home extends StatelessWidget {
     if (result == null) return;
 
     File filePicked = File(result.files.single.path ?? "");
-    if (!await filePicked.exists()) {}
+    if (!await filePicked.exists()) {
+      whenError("Plik nie istnieje");
+      return;
+    }
 
     String fileContent = await filePicked.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) {

@@ -100,12 +100,12 @@ class _ChooseFlashcardsState extends State<ChooseFlashcards> {
   @override
   void initState() {
     super.initState();
-    _getFlashcardsData = FlashcardsStorage.getFlashcardsDataList();
+    _getFlashcardsData = Catalogue.getContent();
   }
 
   Future<void> _refreshFlashcard() async {
     await Catalogue.refreshFile();
-    var newFlashcardData = await FlashcardsStorage.getFlashcardsDataList();
+    var newFlashcardData = await Catalogue.getContent();
     setState(() {
       _getFlashcardsData = SynchronousFuture(newFlashcardData);
     });
