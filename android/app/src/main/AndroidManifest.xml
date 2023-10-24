@@ -6,8 +6,9 @@
         </intent>
     </queries>
     <application
-        android:label="la_fiszki"
+        android:label="La Fiszki"
         android:name="${applicationName}"
+        android:roundIcon="@mipmap/round_launcher"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
