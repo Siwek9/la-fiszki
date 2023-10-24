@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
-import 'package:la_fiszki/pages/flashcard_widget.dart';
+import 'package:la_fiszki/routes/flashcard_widget.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 class ChooseFlashcards extends StatefulWidget {

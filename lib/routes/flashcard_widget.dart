@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/pages/flashcard_screen.dart';
+import 'package:la_fiszki/routes/flashcard_screen.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 // import 'dart:developer' as dev;

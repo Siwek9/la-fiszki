@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/pages/flashcard_summary.dart';
+import 'package:la_fiszki/routes/flashcard_summary.dart';
 
 // import 'dart:developer' as dev;
 

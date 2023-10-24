@@ -4,11 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:la_fiszki/pages/choose_flashcards.dart';
+import 'package:la_fiszki/routes/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// ignore: unused_import
 import 'dart:developer' as dev;
 
 class Home extends StatelessWidget {
@@ -18,65 +19,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(
-      child: LayoutBuilder(builder: (context, constraints) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: constraints.maxHeight / 2 - 50,
-                alignment: Alignment.center,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return Image.asset(
-                    "assets/images/logo.png",
-                    width: constraints.maxWidth - 25,
-                    height: constraints.maxHeight - 25,
-                    fit: BoxFit.cover,
-                  );
-                }),
-              ),
-              SizedBox(
-                  height: 50,
-                  width: constraints.maxWidth,
-                  child: FilledButton(
-                    onPressed: () async {
-                      final url = Uri.parse('https:siwek9.github.io/la-fiszki-website');
-                      if (await canLaunchUrl(url)) {
-                        dev.log("seks");
-                        launchUrl(url, mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
-                        foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSecondary),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
-                    child: Text("Stwórz fiszkę (Strona Internetowa)"),
-                  )),
-              // Text("Stwórz fiszke"),
-              NewPageButton(
-                nextPage: ChooseFlashcards(),
-                text: "Otwórz fiszke",
-                height: constraints.maxHeight / 3,
-              ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                  fixedSize: MaterialStateProperty.all(Size(constraints.maxWidth, constraints.maxHeight / 6)),
-                ),
-                onPressed: importFlashcardFromFile,
-                child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
-              ),
-              // HomePageButton(
-              //   nextPage: CreateCardboard(),
-              //   text: "Stwórz fiszke"
-              // ),
-            ],
-          ),
-        );
-      }),
-    ));
+    return Scaffold(body: HomeBody(importFlashcardCallback: importFlashcardFromFile));
   }
 
   void importFlashcardFromFile() async {
@@ -87,7 +30,10 @@ class Home extends StatelessWidget {
     if (!await filePicked.exists()) return;
 
     String fileContent = await filePicked.readAsString();
-    if (!Flashcard.isFlashcard(fileContent)) return;
+    if (!Flashcard.isFlashcard(fileContent)) {
+      ScaffoldMessenger.of(context).showSnackBar(Snackbar.error())
+      return;
+    }
     var flashcardFolderName = await FlashcardsStorage.addNewFlashcard(fileContent);
 
     var catalogueObject =
@@ -119,6 +65,74 @@ class NewPageButton extends StatelessWidget {
             ));
       },
       child: Text(text ?? "", style: TextStyle(fontSize: MediaQuery.of(context).size.width / 13)),
+    );
+  }
+}
+
+class HomeBody extends StatelessWidget {
+  final VoidCallback importFlashcardCallback;
+
+  const HomeBody({super.key, required this.importFlashcardCallback});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: constraints.maxHeight / 2 - 50,
+                alignment: Alignment.center,
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return Image.asset(
+                    "assets/images/logo.png",
+                    width: constraints.maxWidth - 25,
+                    height: constraints.maxHeight - 25,
+                    fit: BoxFit.cover,
+                  );
+                }),
+              ),
+              SizedBox(
+                  height: 50,
+                  width: constraints.maxWidth,
+                  child: FilledButton(
+                    onPressed: () async {
+                      final url = Uri.parse('https:siwek9.github.io/la-fiszki-website');
+                      if (await canLaunchUrl(url)) {
+                        launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
+                        foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSecondary),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
+                    child: Text("Stwórz fiszkę (Strona Internetowa)"),
+                  )),
+              // Text("Stwórz fiszke"),
+              NewPageButton(
+                nextPage: ChooseFlashcards(),
+                text: "Otwórz fiszke",
+                height: constraints.maxHeight / 3,
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
+                  fixedSize: MaterialStateProperty.all(Size(constraints.maxWidth, constraints.maxHeight / 6)),
+                ),
+                onPressed: importFlashcardCallback,
+                child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
+              ),
+              // HomePageButton(
+              //   nextPage: CreateCardboard(),
+              //   text: "Stwórz fiszke"
+              // ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
