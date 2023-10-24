@@ -7,6 +7,8 @@ import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/routes/choose_flashcards.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
+import 'package:la_fiszki/widgets/buttons.dart';
+import 'package:la_fiszki/widgets/screen_message.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ignore: unused_import
@@ -19,19 +21,28 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: HomeBody(importFlashcardCallback: importFlashcardFromFile));
+    return Scaffold(
+        body: HomeBody(
+            importButtonPressed: () => importFlashcardFromFile(
+                  whenError: (String errorMessage) =>
+                      ScreenMessage.error(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)")
+                          .show(context),
+                  whenSuccess: (String flashcardName) =>
+                      ScreenMessage.success(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
+                )));
   }
 
-  void importFlashcardFromFile() async {
+  void importFlashcardFromFile(
+      {required ValueChanged<String> whenError, required void Function(String) whenSuccess}) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
     if (result == null) return;
 
     File filePicked = File(result.files.single.path ?? "");
-    if (!await filePicked.exists()) return;
+    if (!await filePicked.exists()) {}
 
     String fileContent = await filePicked.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) {
-      ScaffoldMessenger.of(context).showSnackBar(Snackbar.error())
+      whenError("Plik nie jest fiszką");
       return;
     }
     var flashcardFolderName = await FlashcardsStorage.addNewFlashcard(fileContent);
@@ -39,40 +50,16 @@ class Home extends StatelessWidget {
     var catalogueObject =
         Catalogue.createCatalogueElement(folderName: flashcardFolderName, json: jsonDecode(fileContent));
     await Catalogue.addElement(catalogueObject);
-  }
-}
 
-class NewPageButton extends StatelessWidget {
-  final Widget nextPage;
-  final String? text;
-  final double? height;
-  const NewPageButton({super.key, required this.nextPage, this.height, this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      style: ButtonStyle(
-          // backgroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.primary),
-          // foregroundColor: MaterialStateColor.resolveWith((states) => Theme.of(context).colorScheme.onPrimary),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-          fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width, height ?? 50))),
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => nextPage,
-            ));
-      },
-      child: Text(text ?? "", style: TextStyle(fontSize: MediaQuery.of(context).size.width / 13)),
-    );
+    var flashcardName = jsonDecode(fileContent)['name'];
+    whenSuccess(flashcardName);
   }
 }
 
 class HomeBody extends StatelessWidget {
-  final VoidCallback importFlashcardCallback;
+  final VoidCallback importButtonPressed;
 
-  const HomeBody({super.key, required this.importFlashcardCallback});
+  const HomeBody({super.key, required this.importButtonPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +109,7 @@ class HomeBody extends StatelessWidget {
                       RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
                   fixedSize: MaterialStateProperty.all(Size(constraints.maxWidth, constraints.maxHeight / 6)),
                 ),
-                onPressed: importFlashcardCallback,
+                onPressed: importButtonPressed,
                 child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
               ),
               // HomePageButton(
