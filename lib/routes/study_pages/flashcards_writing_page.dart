@@ -6,19 +6,18 @@ import 'package:la_fiszki/widgets/buttons.dart';
 // ignore: unused_import
 import 'dart:developer' as dev;
 
-class FlashcardsExclusionPage extends StatefulWidget {
-  const FlashcardsExclusionPage(
-      {super.key, required this.cards, required this.folderName, required this.flashcardData});
+class FlashcardsWritingPage extends StatefulWidget {
+  const FlashcardsWritingPage({super.key, required this.cards, required this.folderName, required this.flashcardData});
   final List<FlashcardElement> cards;
   final String folderName;
   final Flashcard flashcardData;
 
   @override
-  State<FlashcardsExclusionPage> createState() => _FlashcardsExclusionPageState();
+  State<FlashcardsWritingPage> createState() => _FlashcardsWritingPageState();
 }
 
-class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
-  _FlashcardsExclusionPageState();
+class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
+  _FlashcardsWritingPageState();
   int cardNow = 0;
   bool sideNow = true;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
@@ -43,7 +42,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               },
               child: SizedBox(
                 width: constraints.maxWidth,
-                height: constraints.maxHeight / 2,
+                height: constraints.maxHeight - constraints.maxHeight / 4,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Stack(children: [
@@ -68,29 +67,39 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                               .bodyLarge!
                               .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
                     ),
+                    // Positioned.fill(
+                    //   bottom: 25,
+                    //   // left: 25,
+                    //   child: TextField(
+                    //     decoration: InputDecoration(
+                    //       border: OutlineInputBorder(),
+                    //       hintText: 'Enter a search term',
+                    //     ),
+                    //   ),
+                    // ),
                   ]),
                 ),
               ),
             ),
-            Flex(
-              direction: Axis.horizontal,
-              children: [
-                ChooseButton(
-                    text: "Wiem",
-                    color: MaterialStatePropertyAll(Colors.green),
-                    constraints: constraints,
-                    onPressed: () {
-                      whenUserKnow(widget.cards[cardNow]);
-                    }),
-                ChooseButton(
-                    text: "Nie wiem",
-                    color: MaterialStatePropertyAll(Colors.red),
-                    constraints: constraints,
-                    onPressed: () {
-                      whenUserDontKnow(widget.cards[cardNow]);
-                    }),
-              ],
-            )
+            // Flex(
+            //   direction: Axis.horizontal,
+            //   children: [
+            //     ChooseButton(
+            //         text: "Wiem",
+            //         color: MaterialStatePropertyAll(Colors.green),
+            //         constraints: constraints,
+            //         onPressed: () {
+            //           whenUserKnow(widget.cards[cardNow]);
+            //         }),
+            //     ChooseButton(
+            //         text: "Nie wiem",
+            //         color: MaterialStatePropertyAll(Colors.red),
+            //         constraints: constraints,
+            //         onPressed: () {
+            //           whenUserDontKnow(widget.cards[cardNow]);
+            //         }),
+            //   ],
+            // )
           ]);
         }),
       ),

@@ -116,7 +116,7 @@ class HomeBody extends StatelessWidget {
                 child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
               ),
               // HomePageButton(
-              //   nextPage: CreateCardboard(),
+              //   nextPage: CreateFlashcard(),
               //   text: "Stwórz fiszke"
               // ),
             ],

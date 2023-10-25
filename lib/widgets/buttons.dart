@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/routes/flashcard_info.dart';
+import 'package:la_fiszki/routes/flashcard_info_page.dart';
 
 class NewPageButton extends StatelessWidget {
   final Widget nextPage;
@@ -55,7 +55,7 @@ class FlashcardSelectButton extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => FlashcardsInfo(
+            builder: (context) => FlashcardsInfoPage(
                 folderName: flashcardData.folderName,
                 futureFlashcard: Flashcard.fromFolderName(flashcardData.folderName))));
   }

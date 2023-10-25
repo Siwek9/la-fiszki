@@ -1,17 +1,17 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
 
-class FlashcardsInfo extends StatelessWidget {
+class FlashcardsInfoPage extends StatelessWidget {
   final Future<Flashcard> futureFlashcard;
   final String folderName;
-  const FlashcardsInfo({super.key, required this.folderName, required this.futureFlashcard});
+  const FlashcardsInfoPage({super.key, required this.folderName, required this.futureFlashcard});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class FlashcardsInfo extends StatelessWidget {
         future: futureFlashcard,
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-            return FlashcardContentWidget(
+            return FlashcardInfoContent(
               content: snapshot.data!,
               folderName: folderName,
             );
@@ -30,10 +30,10 @@ class FlashcardsInfo extends StatelessWidget {
   }
 }
 
-class FlashcardContentWidget extends StatelessWidget {
+class FlashcardInfoContent extends StatelessWidget {
   final Flashcard content;
   final String folderName;
-  const FlashcardContentWidget({super.key, required this.folderName, required this.content});
+  const FlashcardInfoContent({super.key, required this.folderName, required this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -44,22 +44,22 @@ class FlashcardContentWidget extends StatelessWidget {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 20),
-              child: GestureDetector(onTap: () => startStudying(context), child: Icon(Icons.play_arrow)),
+              child: GestureDetector(onTap: () => openExclusionPage(context), child: Icon(Icons.play_arrow)),
             )
           ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           child: ListView.builder(
-              itemCount: content.cards.length + 3,
+              itemCount: content.cards.length + 4,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return FlashcardMainData(content: content);
                 } else if (index == 1) {
-                  return StartStudyingButton(
-                    onPressed: () => startStudying(context),
-                  );
+                  return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
                 } else if (index == 2) {
+                  return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
+                } else if (index == 3) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
                     child: Text("Lista Fiszek:",
@@ -69,7 +69,7 @@ class FlashcardContentWidget extends StatelessWidget {
                             .copyWith(color: Theme.of(context).colorScheme.onBackground, fontWeight: FontWeight.bold)),
                   );
                 } else {
-                  index -= 3;
+                  index -= 4;
                   return CompareElements(
                     left: Text(content.cards[index].frontSide,
                         maxLines: 1,
@@ -93,7 +93,7 @@ class FlashcardContentWidget extends StatelessWidget {
         ));
   }
 
-  void startStudying(BuildContext context) {
+  void openExclusionPage(BuildContext context) {
     Random random = Random();
     var shuffleCards = List<FlashcardElement>.from(content.cards);
     shuffleCards.shuffle(random);
@@ -106,10 +106,26 @@ class FlashcardContentWidget extends StatelessWidget {
                   folderName: folderName,
                 )));
   }
+
+  void openWritingPage(BuildContext context) {
+    Random random = Random();
+    var shuffleCards = List<FlashcardElement>.from(content.cards);
+    shuffleCards.shuffle(random);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FlashcardsWritingPage(
+                  flashcardData: content,
+                  cards: shuffleCards,
+                  folderName: folderName,
+                )));
+  }
 }
 
 class StartStudyingButton extends StatelessWidget {
-  const StartStudyingButton({super.key, required this.onPressed});
+  final String modeName;
+
+  const StartStudyingButton({super.key, required this.onPressed, required this.modeName});
 
   final VoidCallback onPressed;
 
@@ -126,7 +142,8 @@ class StartStudyingButton extends StatelessWidget {
               foregroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.onBackground),
               iconSize: MaterialStatePropertyAll(50),
               padding: MaterialStatePropertyAll(EdgeInsets.all(20))),
-          label: Text("Rozpocznij naukę",
+          label: Text("Rozpocznij naukę ($modeName)",
+              textAlign: TextAlign.center,
               style:
                   Theme.of(context).textTheme.headlineSmall!.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
         ));
