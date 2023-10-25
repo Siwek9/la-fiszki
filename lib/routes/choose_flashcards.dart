@@ -1,49 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/flashcards_storage.dart';
-import 'package:la_fiszki/routes/flashcard_widget.dart';
+import 'package:la_fiszki/widgets/buttons.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
+// import 'package:la_fiszki/flashcard.dart';
+// import 'package:la_fiszki/routes/flashcard_widget.dart';
+// import 'package:la_fiszki/flashcards_storage.dart';
 
 class ChooseFlashcards extends StatefulWidget {
   const ChooseFlashcards({super.key});
 
   @override
   State<ChooseFlashcards> createState() => _ChooseFlashcardsState();
-}
-
-class FlashcardSelectButton extends StatelessWidget {
-  final CatalogueElement flashcardData;
-
-  const FlashcardSelectButton({super.key, required this.flashcardData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration:
-          BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.background, width: 2))),
-      child: FilledButton(
-          onPressed: () {
-            moveToFlashCard(context, flashcardData);
-          },
-          style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-            fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width, 80.0)),
-          ),
-          child: Text(flashcardData.name, style: TextStyle(fontSize: 20))),
-    );
-  }
-
-  void moveToFlashCard(BuildContext context, CatalogueElement flashcardData) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => FlashcardWidget(
-                folderName: flashcardData.folderName,
-                futureFlashcard: Flashcard.fromFolderName(flashcardData.folderName))));
-  }
 }
 
 class FlashcardsLoaded extends StatelessWidget {
