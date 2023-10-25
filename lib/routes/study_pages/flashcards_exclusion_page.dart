@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/flashcard_summary.dart';
 
-// import 'dart:developer' as dev;
+// ignore: unused_import
+import 'dart:developer' as dev;
 
-class FlashcardScreen extends StatefulWidget {
-  const FlashcardScreen({super.key, required this.cards, required this.folderName, required this.flashcardData});
+import 'package:la_fiszki/widgets/buttons.dart';
+
+class FlashcardsExclusionPage extends StatefulWidget {
+  const FlashcardsExclusionPage(
+      {super.key, required this.cards, required this.folderName, required this.flashcardData});
   final List<FlashcardElement> cards;
   final String folderName;
   final Flashcard flashcardData;
 
   @override
-  State<FlashcardScreen> createState() => _FlashcardScreenState();
+  State<FlashcardsExclusionPage> createState() => _FlashcardsExclusionPageState();
 }
 
-class _FlashcardScreenState extends State<FlashcardScreen> {
-  _FlashcardScreenState();
-  // final List<FlashcardElement> cards;
+class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
+  _FlashcardsExclusionPageState();
   int cardNow = 0;
   bool sideNow = true;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
@@ -157,35 +160,5 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
       cardNow++;
       sideNow = true;
     });
-  }
-}
-
-class ChooseButton extends StatelessWidget {
-  const ChooseButton(
-      {super.key, required this.text, required this.color, required this.constraints, required this.onPressed});
-  final String text;
-  final MaterialStateProperty<Color> color;
-  final BoxConstraints constraints;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: SizedBox(
-        height: constraints.maxHeight / 2,
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            backgroundColor: color,
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-          ),
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    );
   }
 }

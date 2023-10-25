@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:la_fiszki/routes/choose_flashcards.dart';
+import 'package:la_fiszki/routes/list_of_sets_page.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
 import 'package:la_fiszki/widgets/buttons.dart';
@@ -14,8 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 // ignore: unused_import
 import 'dart:developer' as dev;
 
-class Home extends StatelessWidget {
-  const Home({
+class HomePage extends StatelessWidget {
+  const HomePage({
     super.key,
   });
 
@@ -25,10 +25,10 @@ class Home extends StatelessWidget {
         body: HomeBody(
             importButtonPressed: () => importFlashcardFromFile(
                   whenError: (String errorMessage) =>
-                      ScreenMessage.error(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)")
+                      ScreenMessage.onError(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)")
                           .show(context),
                   whenSuccess: (String flashcardName) =>
-                      ScreenMessage.success(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
+                      ScreenMessage.onSuccess(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
                 )));
   }
 
@@ -102,7 +102,7 @@ class HomeBody extends StatelessWidget {
                   )),
               // Text("Stwórz fiszke"),
               NewPageButton(
-                nextPage: ChooseFlashcards(),
+                nextPage: ListOfSetsPage(),
                 text: "Otwórz fiszke",
                 height: constraints.maxHeight / 3,
               ),

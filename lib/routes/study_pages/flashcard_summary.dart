@@ -1,17 +1,14 @@
-// import 'dart:developer' as dev;
-// import 'dart:io';
-
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/routes/flashcard_screen.dart';
+import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
+
+// ignore: unused_import
+import 'dart:developer' as dev;
 
 class FlashcardSummary extends StatelessWidget {
   final List<FlashcardElement> knownFlashcards;
-
   final List<FlashcardElement> dontKnownFlashcards;
   final String folderName;
   final Flashcard flashcardData;
@@ -21,7 +18,6 @@ class FlashcardSummary extends StatelessWidget {
       required this.dontKnownFlashcards,
       required this.folderName,
       required this.flashcardData});
-  // final List<FlashcardElement> wholeFlashcard;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +38,6 @@ class FlashcardSummary extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(
-                      // color: Colors.blue,
                       width: constraints.maxWidth,
                       height: constraints.maxHeight / 2,
                       child: Card(
@@ -167,7 +162,7 @@ class FlashcardSummary extends StatelessWidget {
     Navigator.of(context)
       ..pop()
       ..push(MaterialPageRoute(
-          builder: (context) => FlashcardScreen(
+          builder: (context) => FlashcardsExclusionPage(
                 folderName: folderName,
                 cards: shuffleCards,
                 flashcardData: flashcardData,
@@ -185,7 +180,7 @@ class FlashcardSummary extends StatelessWidget {
                   Random random = Random();
                   var shuffleCards = List<FlashcardElement>.from(snapshot.data!.cards);
                   shuffleCards.shuffle(random);
-                  return FlashcardScreen(
+                  return FlashcardsExclusionPage(
                     folderName: folderName,
                     cards: shuffleCards,
                     flashcardData: snapshot.data!,

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:la_fiszki/routes/home.dart';
+import 'package:la_fiszki/routes/home_page.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 // ignore: unused_import
@@ -32,7 +32,7 @@ class LaFiszki extends StatelessWidget {
 
   Widget initStructure(context, snapshot) {
     if (snapshot.connectionState == ConnectionState.done) {
-      return Home();
+      return HomePage();
     } else {
       return LoadingScreen.wholeScreen(context);
     }

@@ -2,16 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/routes/flashcard_screen.dart';
+import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
-// import 'dart:developer' as dev;
+// ignore: unused_import
+import 'dart:developer' as dev;
 
-class FlashcardWidget extends StatelessWidget {
+class FlashcardsInfo extends StatelessWidget {
   final Future<Flashcard> futureFlashcard;
   final String folderName;
-  // late Flashcard content;
-  const FlashcardWidget({super.key, required this.folderName, required this.futureFlashcard});
+  const FlashcardsInfo({super.key, required this.folderName, required this.futureFlashcard});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,6 @@ class FlashcardWidget extends StatelessWidget {
             return LoadingScreen.wholeScreen(context);
           }
         });
-    // return Scaffold(body: Text(content.name));
   }
 }
 
@@ -55,7 +54,7 @@ class FlashcardContentWidget extends StatelessWidget {
               itemCount: content.cards.length + 3,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return FlashcardInfo(content: content);
+                  return FlashcardMainData(content: content);
                 } else if (index == 1) {
                   return StartStudyingButton(
                     onPressed: () => startStudying(context),
@@ -101,7 +100,7 @@ class FlashcardContentWidget extends StatelessWidget {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => FlashcardScreen(
+            builder: (context) => FlashcardsExclusionPage(
                   flashcardData: content,
                   cards: shuffleCards,
                   folderName: folderName,
@@ -134,8 +133,8 @@ class StartStudyingButton extends StatelessWidget {
   }
 }
 
-class FlashcardInfo extends StatelessWidget {
-  const FlashcardInfo({
+class FlashcardMainData extends StatelessWidget {
+  const FlashcardMainData({
     super.key,
     required this.content,
   });
