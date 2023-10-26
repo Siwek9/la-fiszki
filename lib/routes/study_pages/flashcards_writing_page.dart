@@ -45,39 +45,75 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                 height: constraints.maxHeight - constraints.maxHeight / 4,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Stack(children: [
-                    Card(
-                      color: Theme.of(context).colorScheme.primary,
-                      child: Center(
-                        child: Text(
-                          sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-                        ),
+                  child: Card(
+                    color: Theme.of(context).colorScheme.primary,
+                    child: Center(
+                      child: Flex(
+                        direction: Axis.vertical,
+                        children: [
+                          Expanded(
+                            child: Text(
+                                sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
+                          ),
+                          Expanded(
+                            child: Text(
+                              sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                            ),
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                margin: EdgeInsets.all(20),
+                                child: TextField(
+                                    autocorrect: false,
+                                    autofocus: true,
+                                    cursorColor: Colors.white,
+                                    cursorOpacityAnimates: true,
+                                    keyboardType: TextInputType.text,
+                                    maxLines: 1,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                                    decoration: InputDecoration(
+                                        fillColor: Colors.red,
+                                        // focusColor: Colors.red,
+                                        enabledBorder:
+                                            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)))),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                    Positioned.fill(
-                      top: 25,
-                      child: Text(sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
-                    ),
-                    // Positioned.fill(
-                    //   bottom: 25,
-                    //   // left: 25,
-                    //   child: TextField(
-                    //     decoration: InputDecoration(
-                    //       border: OutlineInputBorder(),
-                    //       hintText: 'Enter a search term',
-                    //     ),
-                    //   ),
-                    // ),
-                  ]),
+                  ),
+                  // Positioned.fill(
+                  //   top: 25,
+                  //   child: Text(sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
+                  //       textAlign: TextAlign.center,
+                  //       style: Theme.of(context)
+                  //           .textTheme
+                  //           .bodyLarge!
+                  //           .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
+                  // ),
+                  // // Positioned.fill(
+                  //   bottom: 25,
+                  //   // left: 25,
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //       border: OutlineInputBorder(),
+                  //       hintText: 'Enter a search term',
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
             ),
