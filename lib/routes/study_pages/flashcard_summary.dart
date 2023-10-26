@@ -24,16 +24,17 @@ class FlashcardSummary extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            title: Text("Gratulacje!",
-                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
-            centerTitle: true,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: LayoutBuilder(builder: (context, constraints) {
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: Text("Gratulacje!",
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold)),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
               return Center(
                 child: Column(
                   children: [
@@ -42,26 +43,27 @@ class FlashcardSummary extends StatelessWidget {
                       height: constraints.maxHeight / 2,
                       child: Card(
                         color: Theme.of(context).colorScheme.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         child: Center(
                           child: SummaryDifference(
-                              requirement: dontKnownFlashcards.isEmpty,
-                              whenFlashcardFinished: Text(
-                                "Umiesz już wszystko!\nCzy chcesz rozwiązać te fiszki jeszcze raz?",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              whenFlashcardNotComplete: Text(
-                                "Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${dontKnownFlashcards.length} do nauki\nCzy kontynuować naukę?",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              )),
+                            requirement: dontKnownFlashcards.isEmpty,
+                            whenFlashcardFinished: Text(
+                              "Umiesz już wszystko!\nCzy chcesz rozwiązać te fiszki jeszcze raz?",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            whenFlashcardNotComplete: Text(
+                              "Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${dontKnownFlashcards.length} do nauki\nCzy kontynuować naukę?",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -73,15 +75,20 @@ class FlashcardSummary extends StatelessWidget {
                             height: constraints.maxHeight / 7,
                             width: constraints.maxWidth - 25,
                             child: FilledButton(
-                                style: ButtonStyle(
-                                    shape: MaterialStatePropertyAll(
-                                        RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))))),
-                                onPressed: () => openFlashcardFromStart(context),
-                                child: Text("Rozpocznij naukę od początku",
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                          color: Theme.of(context).colorScheme.onPrimary,
-                                        ))),
+                              style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                ),
+                              ),
+                              onPressed: () => openFlashcardFromStart(context),
+                              child: Text(
+                                "Rozpocznij naukę od początku",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                              ),
+                            ),
                           ),
                         ),
                         whenFlashcardNotComplete: Padding(
@@ -91,14 +98,18 @@ class FlashcardSummary extends StatelessWidget {
                             width: constraints.maxWidth - 25,
                             child: FilledButton(
                               style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))))),
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                ),
+                              ),
                               onPressed: () => openFlashcardAgain(context),
-                              child: Text("Kontynuuj naukę",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      )),
+                              child: Text(
+                                "Kontynuuj naukę",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                    ),
+                              ),
                             ),
                           ),
                         )),
@@ -110,17 +121,22 @@ class FlashcardSummary extends StatelessWidget {
                           height: constraints.maxHeight / 9,
                           width: constraints.maxWidth - 75,
                           child: ElevatedButton(
-                              style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))))),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text("Wróć do menu głównego",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ))),
+                            style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "Wróć do menu głównego",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                       whenFlashcardNotComplete: Padding(
@@ -129,29 +145,38 @@ class FlashcardSummary extends StatelessWidget {
                           height: constraints.maxHeight / 9,
                           width: constraints.maxWidth - 75,
                           child: ElevatedButton(
-                              style: ButtonStyle(
-                                  shape: MaterialStatePropertyAll(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))))),
-                              onPressed: () {
-                                preventFromLosingProgress(context).then((value) {
+                            style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                              ),
+                            ),
+                            onPressed: () {
+                              preventFromLosingProgress(context).then(
+                                (value) {
                                   if (value == true) {
                                     Navigator.pop(context);
                                   }
-                                });
-                              },
-                              child: Text("Wróć do menu głównego",
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ))),
+                                },
+                              );
+                            },
+                            child: Text(
+                              "Wróć do menu głównego",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
               );
-            }),
-          )),
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -161,34 +186,41 @@ class FlashcardSummary extends StatelessWidget {
     shuffleCards.shuffle(random);
     Navigator.of(context)
       ..pop()
-      ..push(MaterialPageRoute(
+      ..push(
+        MaterialPageRoute(
           builder: (context) => FlashcardsExclusionPage(
-                folderName: folderName,
-                cards: shuffleCards,
-                flashcardData: flashcardData,
-              )));
+            folderName: folderName,
+            cards: shuffleCards,
+            flashcardData: flashcardData,
+          ),
+        ),
+      );
   }
 
   void openFlashcardFromStart(BuildContext context) {
     Navigator.of(context)
       ..pop()
-      ..push(MaterialPageRoute(
+      ..push(
+        MaterialPageRoute(
           builder: (context) => FutureBuilder(
-              future: Flashcard.fromFolderName(folderName),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-                  Random random = Random();
-                  var shuffleCards = List<FlashcardElement>.from(snapshot.data!.cards);
-                  shuffleCards.shuffle(random);
-                  return FlashcardsExclusionPage(
-                    folderName: folderName,
-                    cards: shuffleCards,
-                    flashcardData: snapshot.data!,
-                  );
-                } else {
-                  return LoadingScreen.wholeScreen(context);
-                }
-              })));
+            future: Flashcard.fromFolderName(folderName),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                Random random = Random();
+                var shuffleCards = List<FlashcardElement>.from(snapshot.data!.cards);
+                shuffleCards.shuffle(random);
+                return FlashcardsExclusionPage(
+                  folderName: folderName,
+                  cards: shuffleCards,
+                  flashcardData: snapshot.data!,
+                );
+              } else {
+                return LoadingScreen.wholeScreen(context);
+              }
+            },
+          ),
+        ),
+      );
   }
 
   Future<bool> preventFromLosingProgress(BuildContext context) async {
@@ -230,12 +262,14 @@ class SummaryDifference extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
-      if (requirement) {
-        return whenFlashcardFinished;
-      } else {
-        return whenFlashcardNotComplete;
-      }
-    });
+    return Builder(
+      builder: (context) {
+        if (requirement) {
+          return whenFlashcardFinished;
+        } else {
+          return whenFlashcardNotComplete;
+        }
+      },
+    );
   }
 }

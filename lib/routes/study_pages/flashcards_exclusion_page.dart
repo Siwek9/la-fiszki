@@ -46,29 +46,32 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                 height: constraints.maxHeight / 2,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Stack(children: [
-                    Card(
-                      color: Theme.of(context).colorScheme.primary,
-                      child: Center(
-                        child: Text(
-                          sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                  child: Stack(
+                    children: [
+                      Card(
+                        color: Theme.of(context).colorScheme.primary,
+                        child: Center(
+                          child: Text(
+                            sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
+                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                ),
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned.fill(
-                      top: 25,
-                      child: Text(sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
+                      Positioned.fill(
+                        top: 25,
+                        child: Text(
+                          sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
-                    ),
-                  ]),
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -76,19 +79,21 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               direction: Axis.horizontal,
               children: [
                 ChooseButton(
-                    text: "Wiem",
-                    color: MaterialStatePropertyAll(Colors.green),
-                    constraints: constraints,
-                    onPressed: () {
-                      whenUserKnow(widget.cards[cardNow]);
-                    }),
+                  text: "Wiem",
+                  color: MaterialStatePropertyAll(Colors.green),
+                  constraints: constraints,
+                  onPressed: () {
+                    whenUserKnow(widget.cards[cardNow]);
+                  },
+                ),
                 ChooseButton(
-                    text: "Nie wiem",
-                    color: MaterialStatePropertyAll(Colors.red),
-                    constraints: constraints,
-                    onPressed: () {
-                      whenUserDontKnow(widget.cards[cardNow]);
-                    }),
+                  text: "Nie wiem",
+                  color: MaterialStatePropertyAll(Colors.red),
+                  constraints: constraints,
+                  onPressed: () {
+                    whenUserDontKnow(widget.cards[cardNow]);
+                  },
+                ),
               ],
             )
           ]);
@@ -126,13 +131,16 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     if (cardNow == widget.cards.length - 1) {
       Navigator.of(context)
         ..pop()
-        ..push(MaterialPageRoute(
+        ..push(
+          MaterialPageRoute(
             builder: (context) => FlashcardSummary(
-                  folderName: widget.folderName,
-                  knownFlashcards: cardKnown,
-                  dontKnownFlashcards: cardDoesntKnown,
-                  flashcardData: widget.flashcardData,
-                )));
+              folderName: widget.folderName,
+              knownFlashcards: cardKnown,
+              dontKnownFlashcards: cardDoesntKnown,
+              flashcardData: widget.flashcardData,
+            ),
+          ),
+        );
       return;
     }
     setState(() {
@@ -146,13 +154,16 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     if (cardNow == widget.cards.length - 1) {
       Navigator.of(context)
         ..pop()
-        ..push(MaterialPageRoute(
+        ..push(
+          MaterialPageRoute(
             builder: (context) => FlashcardSummary(
-                  folderName: widget.folderName,
-                  knownFlashcards: cardKnown,
-                  dontKnownFlashcards: cardDoesntKnown,
-                  flashcardData: widget.flashcardData,
-                )));
+              folderName: widget.folderName,
+              knownFlashcards: cardKnown,
+              dontKnownFlashcards: cardDoesntKnown,
+              flashcardData: widget.flashcardData,
+            ),
+          ),
+        );
       return;
     }
     setState(() {

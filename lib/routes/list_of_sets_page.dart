@@ -21,29 +21,37 @@ class _ListOfSetsPageState extends State<ListOfSetsPage> {
   @override
   Widget build(Object context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Wybierz fiszkę"), centerTitle: true, actions: <Widget>[
+      appBar: AppBar(
+        title: Text("Wybierz fiszkę"),
+        centerTitle: true,
+        actions: <Widget>[
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                  onTap: () {
-                    if (refreshIndicatorKey != null) refreshIndicatorKey?.currentState?.show();
-                  },
-                  child: Icon(Icons.refresh)))
-        ]),
-        body: FutureBuilder(
-            future: _getFlashcardsData,
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
-                refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-                return FlashcardsLoaded(
-                  refreshIndicatorKey: refreshIndicatorKey!,
-                  flashcardsData: snapshot.data!,
-                  onRefresh: _refreshFlashcard,
-                );
-              } else {
-                return LoadingScreen.wholeScreen(context);
-              }
-            }));
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                if (refreshIndicatorKey != null) refreshIndicatorKey?.currentState?.show();
+              },
+              child: Icon(Icons.refresh),
+            ),
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        future: _getFlashcardsData,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+            refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+            return FlashcardsLoaded(
+              refreshIndicatorKey: refreshIndicatorKey!,
+              flashcardsData: snapshot.data!,
+              onRefresh: _refreshFlashcard,
+            );
+          } else {
+            return LoadingScreen.wholeScreen(context);
+          }
+        },
+      ),
+    );
   }
 
   @override

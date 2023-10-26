@@ -45,7 +45,6 @@ class LaFiszki extends StatelessWidget {
       catalogue = await catalogue.create(recursive: true);
 
       await Catalogue.refreshFile();
-      // await catalogue.writeAsString(jsonEncode(List.empty()));
     }
   }
 }
