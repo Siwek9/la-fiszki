@@ -25,9 +25,10 @@ class HomePage extends StatelessWidget {
       body: HomeBody(
         importButtonPressed: () => importFlashcardFromFile(
           whenError: (String errorMessage) =>
-              ScreenMessage.onError(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)").show(context),
+              ScreenMessageSnackBar.onError(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)")
+                  .show(context),
           whenSuccess: (String flashcardName) =>
-              ScreenMessage.onSuccess(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
+              ScreenMessageSnackBar.onSuccess(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
         ),
       ),
     );
