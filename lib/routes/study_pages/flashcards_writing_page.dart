@@ -20,7 +20,7 @@ class FlashcardsWritingPage extends StatefulWidget {
 class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   _FlashcardsWritingPageState();
   int cardNow = 0;
-  // bool sideNow = true;
+  FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
 
@@ -50,7 +50,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                           children: [
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Text(
                                   widget.flashcardData.frontSideName,
                                   textAlign: TextAlign.center,
@@ -78,28 +78,17 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                 child: Container(
                                   margin: EdgeInsets.all(20),
                                   child: FlashcardTextInputField(
-                                    statusValue: FlashcardTextInputStatus.normal,
+                                    statusValue: statusValue,
                                     onSubmit: (value) {
                                       if (value == widget.cards[cardNow].backSide) {
-                                        ScreenMessageSnackBar.onSuccess(text: "lol").show(context);
-
-                                        // showModalBottomSheet(
-                                        //   // shape: Border.all(),
-                                        //   enableDrag: false,
-                                        //   useSafeArea: true,
-                                        //   context: context,
-                                        //   builder: (BuildContext context) {
-                                        //     return Container(
-                                        //         decoration:
-                                        //             BoxDecoration(borderRadius: BorderRadius.zero, color: Colors.white),
-                                        //         width: constraints.maxWidth,
-                                        //         height: constraints.maxHeight / 2,
-                                        //         child: Text("siema"));
-                                        //   },
-                                        // );
+                                        setState(() {
+                                          statusValue = FlashcardTextInputStatus.success;
+                                        });
                                         return true;
                                       } else {
-                                        ScreenMessageSnackBar.onError(text: "bruh").show(context);
+                                        setState(() {
+                                          statusValue = FlashcardTextInputStatus.error;
+                                        });
                                         return false;
                                       }
                                     },
@@ -238,9 +227,9 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
     if (widget.statusValue == FlashcardTextInputStatus.normal) {
       return isFocus ? Colors.white.withOpacity(0.2) : Colors.transparent;
     } else if (widget.statusValue == FlashcardTextInputStatus.success) {
-      return Colors.green.withOpacity(0.2);
+      return Colors.green.withOpacity(1);
     } else {
-      return Colors.red.withOpacity(0.2);
+      return Colors.red.withOpacity(1);
     }
   }
 
@@ -252,11 +241,13 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
         return TextField(
           // autocorrect: false,
           controller: _myController,
-          onSubmitted: (value) => widget.onSubmit(value),
+          onSubmitted: (value) => setState(() {
+            widget.onSubmit(value);
+          }),
           focusNode: _myFocusNode,
           autofocus: true,
           enableSuggestions: false,
-          keyboardType: TextInputType.emailAddress, // for no autocorrect
+          keyboardType: TextInputType.emailAddress, // for turning off autocorrect
           maxLines: 1,
           clipBehavior: Clip.hardEdge,
           style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -266,7 +257,9 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
           cursorOpacityAnimates: true,
           decoration: InputDecoration(
             suffixIcon: GestureDetector(
-              onTap: () => widget.onSubmit(_myController.text),
+              onTap: () => setState(() {
+                widget.onSubmit(_myController.text);
+              }),
               child: Icon(
                 Icons.send,
                 color: Colors.white,
