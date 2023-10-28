@@ -49,13 +49,16 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                           direction: Axis.vertical,
                           children: [
                             Expanded(
-                              child: Text(
-                                widget.flashcardData.frontSideName,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                    ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.flashcardData.frontSideName,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      ),
+                                ),
                               ),
                             ),
                             Expanded(
@@ -75,22 +78,25 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                 child: Container(
                                   margin: EdgeInsets.all(20),
                                   child: FlashcardTextInputField(
+                                    statusValue: FlashcardTextInputStatus.normal,
                                     onSubmit: (value) {
                                       if (value == widget.cards[cardNow].backSide) {
                                         ScreenMessageSnackBar.onSuccess(text: "lol").show(context);
-                                        showModalBottomSheet(
-                                          // shape: Border.all(),
-                                          enableDrag: false,
-                                          useSafeArea: true,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Container(
-                                              decoration:
-                                                  BoxDecoration(borderRadius: BorderRadius.zero, color: Colors.white),
-                                              height: constraints.maxHeight / 2,
-                                            );
-                                          },
-                                        );
+
+                                        // showModalBottomSheet(
+                                        //   // shape: Border.all(),
+                                        //   enableDrag: false,
+                                        //   useSafeArea: true,
+                                        //   context: context,
+                                        //   builder: (BuildContext context) {
+                                        //     return Container(
+                                        //         decoration:
+                                        //             BoxDecoration(borderRadius: BorderRadius.zero, color: Colors.white),
+                                        //         width: constraints.maxWidth,
+                                        //         height: constraints.maxHeight / 2,
+                                        //         child: Text("siema"));
+                                        //   },
+                                        // );
                                         return true;
                                       } else {
                                         ScreenMessageSnackBar.onError(text: "bruh").show(context);
@@ -184,12 +190,17 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   }
 }
 
+enum FlashcardTextInputStatus { normal, success, error }
+
 class FlashcardTextInputField extends StatefulWidget {
   final bool Function(String) onSubmit;
+
+  final FlashcardTextInputStatus statusValue;
 
   const FlashcardTextInputField({
     super.key,
     required this.onSubmit,
+    required this.statusValue,
   });
 
   @override
@@ -221,6 +232,16 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
 
   void _onFocusChange() {
     _myFocusNotifier.value = _myFocusNode.hasFocus;
+  }
+
+  Color setFilledColor(isFocus) {
+    if (widget.statusValue == FlashcardTextInputStatus.normal) {
+      return isFocus ? Colors.white.withOpacity(0.2) : Colors.transparent;
+    } else if (widget.statusValue == FlashcardTextInputStatus.success) {
+      return Colors.green.withOpacity(0.2);
+    } else {
+      return Colors.red.withOpacity(0.2);
+    }
   }
 
   @override
@@ -259,7 +280,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
               ),
             ),
             filled: true,
-            fillColor: isFocus ? Colors.white.withOpacity(0.2) : Colors.transparent,
+            fillColor: setFilledColor(isFocus),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(7.5),
               borderSide: BorderSide(width: 0, color: Colors.transparent),
