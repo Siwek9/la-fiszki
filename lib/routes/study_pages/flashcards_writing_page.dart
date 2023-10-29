@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
+import 'package:la_fiszki/widgets/buttons_when_error.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
 
+import 'package:la_fiszki/widgets/buttons_when_normal.dart';
+import 'package:la_fiszki/widgets/buttons_when_success.dart';
 
 class FlashcardsWritingPage extends StatefulWidget {
   const FlashcardsWritingPage({super.key, required this.cards, required this.folderName, required this.flashcardData});
@@ -22,6 +25,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
+  final TextEditingController _myController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +38,13 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
         ),
         body: LayoutBuilder(
           builder: (context, BoxConstraints constraints) {
-            return Column(
-              children: [
-                SizedBox(
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight - constraints.maxHeight / 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+            return Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight - constraints.maxHeight / 4,
                     child: Card(
                       color: Theme.of(context).colorScheme.primary,
                       child: Center(
@@ -77,6 +81,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                 child: Container(
                                   margin: EdgeInsets.all(20),
                                   child: FlashcardTextInputField(
+                                    controller: _myController,
                                     statusValue: statusValue,
                                     onSubmit: (value) {
                                       if (value == widget.cards[cardNow].backSide) {
@@ -100,8 +105,41 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Builder(builder: (context) {
+                    if (statusValue == FlashcardTextInputStatus.normal) {
+                      return ButtonsWhenNormal(
+                        whenHint: () {
+                          // TODO implement TextField hint
+                        },
+                        whenDontKnow: () {
+                          statusValue = FlashcardTextInputStatus.error;
+                        },
+                        whenSubmit: () {
+                          if (_myController.text == widget.cards[cardNow].backSide) {
+                            setState(() {
+                              statusValue = FlashcardTextInputStatus.success;
+                            });
+                          } else {
+                            setState(() {
+                              statusValue = FlashcardTextInputStatus.error;
+                            });
+                          }
+                        },
+                      );
+                    } else if (statusValue == FlashcardTextInputStatus.success) {
+                      return ButtonsWhenSuccess(
+                        whenContinue: () {
+                          // TODO implement moving to next flashcard
+                        },
+                      );
+                    } else {
+                      return ButtonsWhenError(
+                          // whenRewritining:
+                          );
+                    }
+                  }),
+                ],
+              ),
             );
           },
         ),
@@ -185,10 +223,13 @@ class FlashcardTextInputField extends StatefulWidget {
 
   final FlashcardTextInputStatus statusValue;
 
+  final TextEditingController controller;
+
   const FlashcardTextInputField({
     super.key,
     required this.onSubmit,
     required this.statusValue,
+    required this.controller,
   });
 
   @override
@@ -198,7 +239,7 @@ class FlashcardTextInputField extends StatefulWidget {
 class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
   late FocusNode _myFocusNode;
   final ValueNotifier<bool> _myFocusNotifier = ValueNotifier<bool>(false);
-  final TextEditingController _myController = TextEditingController();
+  // final TextEditingController _myController = TextEditingController();
 
   @override
   void initState() {
@@ -213,7 +254,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
     _myFocusNode.removeListener(_onFocusChange);
     _myFocusNode.dispose();
     _myFocusNotifier.dispose();
-    _myController.dispose();
+    widget.controller.dispose();
 
     super.dispose();
   }
@@ -239,7 +280,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
       builder: (context, isFocus, child) {
         return TextField(
           // autocorrect: false,
-          controller: _myController,
+          controller: widget.controller,
           onSubmitted: (value) => setState(() {
             widget.onSubmit(value);
           }),
@@ -257,7 +298,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
           decoration: InputDecoration(
             suffixIcon: GestureDetector(
               onTap: () => setState(() {
-                widget.onSubmit(_myController.text);
+                widget.onSubmit(widget.controller.text);
               }),
               child: Icon(
                 Icons.send,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
-import 'package:la_fiszki/widgets/buttons.dart';
+import 'package:la_fiszki/widgets/choose_button.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
