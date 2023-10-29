@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/routes/list_of_sets_page.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
-import 'package:la_fiszki/widgets/buttons.dart';
-import 'package:la_fiszki/widgets/screen_message.dart';
+import 'package:la_fiszki/widgets/new_page_button.dart';
+import 'package:la_fiszki/widgets/custom_snack_bars.dart';
 import 'package:url_launcher/url_launcher.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
@@ -25,10 +25,9 @@ class HomePage extends StatelessWidget {
       body: HomeBody(
         importButtonPressed: () => importFlashcardFromFile(
           whenError: (String errorMessage) =>
-              ScreenMessageSnackBar.onError(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)")
-                  .show(context),
+              CustomSnackBars.onError(text: "Wystąpił błąd podczas importowania fiszki ($errorMessage)").show(context),
           whenSuccess: (String flashcardName) =>
-              ScreenMessageSnackBar.onSuccess(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
+              CustomSnackBars.onSuccess(text: "Fiszka '$flashcardName' została dodana poprawnie").show(context),
         ),
       ),
     );

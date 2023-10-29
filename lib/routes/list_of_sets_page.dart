@@ -1,11 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
-import 'package:la_fiszki/widgets/buttons.dart';
+import 'package:la_fiszki/widgets/flashcard_select_button.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
-// import 'package:la_fiszki/flashcard.dart';
-// import 'package:la_fiszki/routes/flashcard_widget.dart';
-// import 'package:la_fiszki/flashcards_storage.dart';
 
 class ListOfSetsPage extends StatefulWidget {
   const ListOfSetsPage({super.key});
@@ -47,7 +44,7 @@ class _ListOfSetsPageState extends State<ListOfSetsPage> {
               onRefresh: _refreshFlashcard,
             );
           } else {
-            return LoadingScreen.wholeScreen(context);
+            return LoadingScreen();
           }
         },
       ),

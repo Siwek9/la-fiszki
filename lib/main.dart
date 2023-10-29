@@ -34,7 +34,7 @@ class LaFiszki extends StatelessWidget {
     if (snapshot.connectionState == ConnectionState.done) {
       return HomePage();
     } else {
-      return LoadingScreen.wholeScreen(context);
+      return LoadingScreen();
     }
   }
 

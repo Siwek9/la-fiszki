@@ -24,7 +24,7 @@ class FlashcardsInfoPage extends StatelessWidget {
             folderName: folderName,
           );
         } else {
-          return LoadingScreen.wholeScreen(context);
+          return LoadingScreen();
         }
       },
     );

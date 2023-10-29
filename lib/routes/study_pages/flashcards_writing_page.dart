@@ -5,7 +5,6 @@ import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
 // ignore: unused_import
 import 'dart:developer' as dev;
 
-import 'package:la_fiszki/widgets/screen_message.dart';
 
 class FlashcardsWritingPage extends StatefulWidget {
   const FlashcardsWritingPage({super.key, required this.cards, required this.folderName, required this.flashcardData});

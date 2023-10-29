@@ -215,7 +215,7 @@ class FlashcardSummary extends StatelessWidget {
                   flashcardData: snapshot.data!,
                 );
               } else {
-                return LoadingScreen.wholeScreen(context);
+                return LoadingScreen();
               }
             },
           ),
