@@ -11,10 +11,13 @@ import 'package:la_fiszki/widgets/buttons_when_normal.dart';
 import 'package:la_fiszki/widgets/buttons_when_success.dart';
 
 class FlashcardsWritingPage extends StatefulWidget {
-  const FlashcardsWritingPage({super.key, required this.cards, required this.folderName, required this.flashcardData});
+  final int firstSide;
   final List<FlashcardElement> cards;
   final String folderName;
   final Flashcard flashcardData;
+
+  const FlashcardsWritingPage(
+      {super.key, required this.cards, required this.folderName, required this.flashcardData, required this.firstSide});
 
   @override
   State<FlashcardsWritingPage> createState() => _FlashcardsWritingPageState();
@@ -29,6 +32,22 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
   final TextEditingController _myController = TextEditingController();
+
+  String sideContent(String side) {
+    if (side == "front") {
+      if (widget.firstSide == 0) {
+        return widget.cards[cardNow].frontSide;
+      } else {
+        return widget.cards[cardNow].backSide;
+      }
+    } else {
+      if (widget.firstSide == 0) {
+        return widget.cards[cardNow].backSide;
+      } else {
+        return widget.cards[cardNow].frontSide;
+      }
+    }
+  }
 
   _FlashcardsWritingPageState();
 
@@ -54,7 +73,6 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               child: Column(
                 children: [
                   SizedBox(
-                    // width: constraints.maxWidth,
                     height: constraints.maxHeight - constraints.maxHeight / 4,
                     child: Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
@@ -67,7 +85,9 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(15.0),
                                 child: Text(
-                                  widget.flashcardData.frontSideName,
+                                  widget.firstSide == 0
+                                      ? widget.flashcardData.frontSideName
+                                      : widget.flashcardData.backSideName,
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                         fontWeight: FontWeight.bold,
@@ -80,7 +100,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  widget.cards[cardNow].frontSide,
+                                  sideContent("front"),
                                   style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                         color: Theme.of(context).colorScheme.onPrimary,
                                       ),
@@ -99,23 +119,23 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                     statusValue: statusValue,
                                     onSubmit: (value) {
                                       if (statusValue == FlashcardTextInputStatus.normal) {
-                                        if (((prefixText ?? "") + value) == widget.cards[cardNow].backSide) {
+                                        if (((prefixText ?? "") + value) == sideContent("back")) {
                                           setState(() {
                                             statusValue = FlashcardTextInputStatus.success;
                                           });
                                           return true;
                                         } else {
                                           setState(() {
-                                            oldAnswer = widget.cards[cardNow].backSide;
+                                            oldAnswer = value;
                                             prefixText = null;
                                             _myController.text = "";
-                                            hintText = widget.cards[cardNow].backSide;
+                                            hintText = sideContent("back");
                                             statusValue = FlashcardTextInputStatus.error;
                                           });
                                           return false;
                                         }
                                       } else {
-                                        if (value == widget.cards[cardNow].backSide) {
+                                        if (value == sideContent("back")) {
                                           whenUserDontKnow(widget.cards[cardNow]);
                                           return true;
                                         } else {
@@ -137,26 +157,26 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                       return ButtonsWhenNormal(
                         whenHint: () {
                           setState(() {
-                            prefixText = widget.cards[cardNow].backSide.characters.first;
+                            prefixText = sideContent("back").characters.first;
                           });
                         },
                         whenDontKnow: () {
                           setState(() {
                             prefixText = null;
-                            hintText = widget.cards[cardNow].backSide;
+                            hintText = sideContent("back");
                             statusValue = FlashcardTextInputStatus.error;
                           });
                         },
                         whenSubmit: () {
-                          if (((prefixText ?? "") + _myController.text) == widget.cards[cardNow].backSide) {
+                          if (((prefixText ?? "") + _myController.text) == sideContent("back")) {
                             setState(() {
                               statusValue = FlashcardTextInputStatus.success;
                             });
                           } else {
                             setState(() {
                               prefixText = null;
-                              oldAnswer = widget.cards[cardNow].backSide;
-                              hintText = widget.cards[cardNow].backSide;
+                              oldAnswer = _myController.text;
+                              hintText = sideContent("back");
                               _myController.text = "";
                               statusValue = FlashcardTextInputStatus.error;
                             });
@@ -172,7 +192,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                     } else {
                       return ButtonsWhenError(
                         whenRewritten: () {
-                          if (((prefixText ?? "") + _myController.text) == widget.cards[cardNow].backSide) {
+                          if (((prefixText ?? "") + _myController.text) == sideContent("back")) {
                             whenUserDontKnow(widget.cards[cardNow]);
                           }
                         },
@@ -232,6 +252,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              firstSide: widget.firstSide,
               mode: "writing",
             ),
           ),
@@ -260,6 +281,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              firstSide: widget.firstSide,
               mode: "writing",
             ),
           ),

@@ -7,11 +7,13 @@ import 'package:la_fiszki/widgets/choose_button.dart';
 import 'dart:developer' as dev;
 
 class FlashcardsExclusionPage extends StatefulWidget {
-  const FlashcardsExclusionPage(
-      {super.key, required this.cards, required this.folderName, required this.flashcardData});
+  final int firstSide;
   final List<FlashcardElement> cards;
   final String folderName;
   final Flashcard flashcardData;
+
+  const FlashcardsExclusionPage(
+      {super.key, required this.cards, required this.folderName, required this.flashcardData, required this.firstSide});
 
   @override
   State<FlashcardsExclusionPage> createState() => _FlashcardsExclusionPageState();
@@ -23,6 +25,22 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
   bool sideNow = true;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
+
+  String sideContent(String side) {
+    if (side == "front") {
+      if (widget.firstSide == 0) {
+        return widget.cards[cardNow].frontSide;
+      } else {
+        return widget.cards[cardNow].backSide;
+      }
+    } else {
+      if (widget.firstSide == 0) {
+        return widget.cards[cardNow].backSide;
+      } else {
+        return widget.cards[cardNow].frontSide;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +70,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                         color: Theme.of(context).colorScheme.primary,
                         child: Center(
                           child: Text(
-                            sideNow ? widget.cards[cardNow].frontSide : widget.cards[cardNow].backSide,
+                            sideNow ? sideContent("front") : sideContent("back"),
                             style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                   color: Theme.of(context).colorScheme.onPrimary,
                                 ),
@@ -62,7 +80,9 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                       Positioned.fill(
                         top: 25,
                         child: Text(
-                          sideNow ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName,
+                          (sideNow ^ (widget.firstSide == 1))
+                              ? widget.flashcardData.frontSideName
+                              : widget.flashcardData.backSideName,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -138,6 +158,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              firstSide: widget.firstSide,
               mode: "exclusion",
             ),
           ),
@@ -162,6 +183,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              firstSide: widget.firstSide,
               mode: "exclusion",
             ),
           ),

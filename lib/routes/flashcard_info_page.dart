@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
@@ -31,16 +32,24 @@ class FlashcardsInfoPage extends StatelessWidget {
   }
 }
 
-class FlashcardInfoContent extends StatelessWidget {
+class FlashcardInfoContent extends StatefulWidget {
   final Flashcard content;
   final String folderName;
   const FlashcardInfoContent({super.key, required this.folderName, required this.content});
 
   @override
+  State<FlashcardInfoContent> createState() => _FlashcardInfoContentState();
+}
+
+class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
+  // int get side => 0;
+  int side = 0;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(content.name),
+        title: Text(widget.content.name),
         centerTitle: true,
         actions: [
           Padding(
@@ -55,15 +64,21 @@ class FlashcardInfoContent extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: ListView.builder(
-          itemCount: content.cards.length + 4,
+          itemCount: widget.content.cards.length + 5,
           itemBuilder: (context, index) {
             if (index == 0) {
-              return FlashcardMainData(content: content);
+              return FlashcardMainData(content: widget.content);
             } else if (index == 1) {
-              return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
+              return ChooseSide(
+                onSelected: (sideIndex) {
+                  side = sideIndex;
+                },
+              );
             } else if (index == 2) {
-              return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
+              return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
             } else if (index == 3) {
+              return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
+            } else if (index == 4) {
               return Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
                 child: Text(
@@ -75,17 +90,17 @@ class FlashcardInfoContent extends StatelessWidget {
                 ),
               );
             } else {
-              index -= 4;
+              index -= 5;
               return CompareElements(
                 left: Text(
-                  content.cards[index].frontSide,
+                  widget.content.cards[index].frontSide,
                   maxLines: 1,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                 ),
                 right: Text(
-                  content.cards[index].backSide,
+                  widget.content.cards[index].backSide,
                   maxLines: 1,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
@@ -105,15 +120,16 @@ class FlashcardInfoContent extends StatelessWidget {
 
   void openExclusionPage(BuildContext context) {
     Random random = Random();
-    var shuffleCards = List<FlashcardElement>.from(content.cards);
+    var shuffleCards = List<FlashcardElement>.from(widget.content.cards);
     shuffleCards.shuffle(random);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FlashcardsExclusionPage(
-          flashcardData: content,
+          flashcardData: widget.content,
           cards: shuffleCards,
-          folderName: folderName,
+          folderName: widget.folderName,
+          firstSide: side,
         ),
       ),
     );
@@ -121,18 +137,65 @@ class FlashcardInfoContent extends StatelessWidget {
 
   void openWritingPage(BuildContext context) {
     Random random = Random();
-    var shuffleCards = List<FlashcardElement>.from(content.cards);
+    var shuffleCards = List<FlashcardElement>.from(widget.content.cards);
     shuffleCards.shuffle(random);
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FlashcardsWritingPage(
-          flashcardData: content,
+          flashcardData: widget.content,
           cards: shuffleCards,
-          folderName: folderName,
+          folderName: widget.folderName,
+          firstSide: side,
         ),
       ),
     );
+  }
+}
+
+class ChooseSide extends StatefulWidget {
+  final void Function(int sideIndex) onSelected;
+
+  const ChooseSide({
+    super.key,
+    required this.onSelected,
+  });
+
+  @override
+  State<ChooseSide> createState() => _ChooseSideState();
+}
+
+class _ChooseSideState extends State<ChooseSide> {
+  var selectedSide = [true, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return ToggleButtons(
+        renderBorder: false,
+        isSelected: selectedSide,
+        onPressed: (index) {
+          widget.onSelected(index);
+          setState(() {
+            if (index == 0) {
+              selectedSide = [true, false];
+            } else {
+              selectedSide = [false, true];
+            }
+          });
+        },
+        children: [
+          SizedBox(
+            width: (constraints.maxWidth / 2),
+            child: Text("pierwsza strona"),
+          ),
+          SizedBox(
+            width: (constraints.maxWidth / 2),
+            child: Text("druga strona"),
+          ),
+        ],
+      );
+    });
   }
 }
 

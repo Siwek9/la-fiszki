@@ -14,6 +14,7 @@ class FlashcardSummary extends StatelessWidget {
   final String folderName;
   final Flashcard flashcardData;
   final String mode;
+  final int firstSide;
 
   const FlashcardSummary({
     super.key,
@@ -22,6 +23,7 @@ class FlashcardSummary extends StatelessWidget {
     required this.folderName,
     required this.flashcardData,
     required this.mode,
+    required this.firstSide,
   });
 
   @override
@@ -199,12 +201,14 @@ class FlashcardSummary extends StatelessWidget {
                 folderName: folderName,
                 cards: shuffleCards,
                 flashcardData: flashcardData,
+                firstSide: firstSide,
               );
             } else {
               return FlashcardsExclusionPage(
                 folderName: folderName,
                 cards: shuffleCards,
                 flashcardData: flashcardData,
+                firstSide: firstSide,
               );
             }
           },
@@ -229,12 +233,14 @@ class FlashcardSummary extends StatelessWidget {
                     folderName: folderName,
                     cards: shuffleCards,
                     flashcardData: snapshot.data!,
+                    firstSide: firstSide,
                   );
                 } else {
                   return FlashcardsExclusionPage(
                     folderName: folderName,
                     cards: shuffleCards,
                     flashcardData: snapshot.data!,
+                    firstSide: firstSide,
                   );
                 }
               } else {
