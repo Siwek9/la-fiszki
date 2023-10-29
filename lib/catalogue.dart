@@ -33,7 +33,7 @@ class Catalogue {
   }
 
   // TODO add usecases for this function
-  static bool isJsonCatalogueElement(element) {
+  static bool canBeCatalogueElement(element) {
     if (!element is Map<String, dynamic>) return false;
 
     var elementTyped = element as Map<String, dynamic>;
