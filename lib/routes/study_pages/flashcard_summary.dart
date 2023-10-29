@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
+import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 // ignore: unused_import
@@ -12,12 +13,16 @@ class FlashcardSummary extends StatelessWidget {
   final List<FlashcardElement> dontKnownFlashcards;
   final String folderName;
   final Flashcard flashcardData;
-  const FlashcardSummary(
-      {super.key,
-      required this.knownFlashcards,
-      required this.dontKnownFlashcards,
-      required this.folderName,
-      required this.flashcardData});
+  final String mode;
+
+  const FlashcardSummary({
+    super.key,
+    required this.knownFlashcards,
+    required this.dontKnownFlashcards,
+    required this.folderName,
+    required this.flashcardData,
+    required this.mode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -188,11 +193,21 @@ class FlashcardSummary extends StatelessWidget {
       ..pop()
       ..push(
         MaterialPageRoute(
-          builder: (context) => FlashcardsExclusionPage(
-            folderName: folderName,
-            cards: shuffleCards,
-            flashcardData: flashcardData,
-          ),
+          builder: (context) {
+            if (mode == "writing") {
+              return FlashcardsWritingPage(
+                folderName: folderName,
+                cards: shuffleCards,
+                flashcardData: flashcardData,
+              );
+            } else {
+              return FlashcardsExclusionPage(
+                folderName: folderName,
+                cards: shuffleCards,
+                flashcardData: flashcardData,
+              );
+            }
+          },
         ),
       );
   }
@@ -209,11 +224,19 @@ class FlashcardSummary extends StatelessWidget {
                 Random random = Random();
                 var shuffleCards = List<FlashcardElement>.from(snapshot.data!.cards);
                 shuffleCards.shuffle(random);
-                return FlashcardsExclusionPage(
-                  folderName: folderName,
-                  cards: shuffleCards,
-                  flashcardData: snapshot.data!,
-                );
+                if (mode == "writing") {
+                  return FlashcardsWritingPage(
+                    folderName: folderName,
+                    cards: shuffleCards,
+                    flashcardData: snapshot.data!,
+                  );
+                } else {
+                  return FlashcardsExclusionPage(
+                    folderName: folderName,
+                    cards: shuffleCards,
+                    flashcardData: snapshot.data!,
+                  );
+                }
               } else {
                 return LoadingScreen();
               }

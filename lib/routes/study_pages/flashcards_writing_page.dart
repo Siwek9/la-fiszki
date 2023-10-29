@@ -1,3 +1,4 @@
+// TODO pls clean this mess pls pls
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -20,12 +21,22 @@ class FlashcardsWritingPage extends StatefulWidget {
 }
 
 class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
-  _FlashcardsWritingPageState();
+  String? oldAnswer;
   int cardNow = 0;
   FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
+  String? hintText;
+  String? prefixText;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
   final TextEditingController _myController = TextEditingController();
+
+  _FlashcardsWritingPageState();
+
+  @override
+  void dispose() {
+    _myController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +45,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("$cardNow/${widget.cards.length}"),
+          title: Text("${cardNow + 1}/${widget.cards.length}"),
         ),
         body: LayoutBuilder(
           builder: (context, BoxConstraints constraints) {
@@ -43,9 +54,10 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               child: Column(
                 children: [
                   SizedBox(
-                    width: constraints.maxWidth,
+                    // width: constraints.maxWidth,
                     height: constraints.maxHeight - constraints.maxHeight / 4,
                     child: Card(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                       color: Theme.of(context).colorScheme.primary,
                       child: Center(
                         child: Flex(
@@ -81,19 +93,34 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                 child: Container(
                                   margin: EdgeInsets.all(20),
                                   child: FlashcardTextInputField(
+                                    prefixText: prefixText,
+                                    hintText: hintText,
                                     controller: _myController,
                                     statusValue: statusValue,
                                     onSubmit: (value) {
-                                      if (value == widget.cards[cardNow].backSide) {
-                                        setState(() {
-                                          statusValue = FlashcardTextInputStatus.success;
-                                        });
-                                        return true;
+                                      if (statusValue == FlashcardTextInputStatus.normal) {
+                                        if (((prefixText ?? "") + value) == widget.cards[cardNow].backSide) {
+                                          setState(() {
+                                            statusValue = FlashcardTextInputStatus.success;
+                                          });
+                                          return true;
+                                        } else {
+                                          setState(() {
+                                            oldAnswer = widget.cards[cardNow].backSide;
+                                            prefixText = null;
+                                            _myController.text = "";
+                                            hintText = widget.cards[cardNow].backSide;
+                                            statusValue = FlashcardTextInputStatus.error;
+                                          });
+                                          return false;
+                                        }
                                       } else {
-                                        setState(() {
-                                          statusValue = FlashcardTextInputStatus.error;
-                                        });
-                                        return false;
+                                        if (value == widget.cards[cardNow].backSide) {
+                                          whenUserDontKnow(widget.cards[cardNow]);
+                                          return true;
+                                        } else {
+                                          return false;
+                                        }
                                       }
                                     },
                                   ),
@@ -109,18 +136,28 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                     if (statusValue == FlashcardTextInputStatus.normal) {
                       return ButtonsWhenNormal(
                         whenHint: () {
-                          // TODO implement TextField hint
+                          setState(() {
+                            prefixText = widget.cards[cardNow].backSide.characters.first;
+                          });
                         },
                         whenDontKnow: () {
-                          statusValue = FlashcardTextInputStatus.error;
+                          setState(() {
+                            prefixText = null;
+                            hintText = widget.cards[cardNow].backSide;
+                            statusValue = FlashcardTextInputStatus.error;
+                          });
                         },
                         whenSubmit: () {
-                          if (_myController.text == widget.cards[cardNow].backSide) {
+                          if (((prefixText ?? "") + _myController.text) == widget.cards[cardNow].backSide) {
                             setState(() {
                               statusValue = FlashcardTextInputStatus.success;
                             });
                           } else {
                             setState(() {
+                              prefixText = null;
+                              oldAnswer = widget.cards[cardNow].backSide;
+                              hintText = widget.cards[cardNow].backSide;
+                              _myController.text = "";
                               statusValue = FlashcardTextInputStatus.error;
                             });
                           }
@@ -129,13 +166,25 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                     } else if (statusValue == FlashcardTextInputStatus.success) {
                       return ButtonsWhenSuccess(
                         whenContinue: () {
-                          // TODO implement moving to next flashcard
+                          whenUserKnow(widget.cards[cardNow]);
                         },
                       );
                     } else {
                       return ButtonsWhenError(
-                          // whenRewritining:
-                          );
+                        whenRewritten: () {
+                          if (((prefixText ?? "") + _myController.text) == widget.cards[cardNow].backSide) {
+                            whenUserDontKnow(widget.cards[cardNow]);
+                          }
+                        },
+                        whenWasRight: () {
+                          if (oldAnswer != "") {
+                            setState(() {
+                              _myController.text = oldAnswer!;
+                              statusValue = FlashcardTextInputStatus.success;
+                            });
+                          }
+                        },
+                      );
                     }
                   }),
                 ],
@@ -183,12 +232,18 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              mode: "writing",
             ),
           ),
         );
       return;
     }
     setState(() {
+      _myController.text = "";
+      prefixText = null;
+      oldAnswer = null;
+      hintText = null;
+      statusValue = FlashcardTextInputStatus.normal;
       cardNow++;
     });
   }
@@ -205,12 +260,18 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              mode: "writing",
             ),
           ),
         );
       return;
     }
     setState(() {
+      _myController.text = "";
+      prefixText = null;
+      oldAnswer = null;
+      hintText = null;
+      statusValue = FlashcardTextInputStatus.normal;
       cardNow++;
     });
   }
@@ -225,11 +286,17 @@ class FlashcardTextInputField extends StatefulWidget {
 
   final TextEditingController controller;
 
+  final String? hintText;
+
+  final String? prefixText;
+
   const FlashcardTextInputField({
     super.key,
     required this.onSubmit,
     required this.statusValue,
     required this.controller,
+    this.hintText,
+    this.prefixText,
   });
 
   @override
@@ -254,7 +321,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
     _myFocusNode.removeListener(_onFocusChange);
     _myFocusNode.dispose();
     _myFocusNotifier.dispose();
-    widget.controller.dispose();
+    // widget.controller.dispose();
 
     super.dispose();
   }
@@ -296,6 +363,18 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
           cursorColor: Colors.white,
           cursorOpacityAnimates: true,
           decoration: InputDecoration(
+            hintText: widget.hintText ?? "Wpisz tekst",
+            hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+            prefixText: widget.prefixText,
+            prefixIcon: () {
+              if (widget.statusValue == FlashcardTextInputStatus.error) {
+                return Icon(Icons.close, color: Colors.white);
+              } else if (widget.statusValue == FlashcardTextInputStatus.success) {
+                return Icon(Icons.done, color: Colors.white);
+              } else {
+                return null;
+              }
+            }(),
             suffixIcon: GestureDetector(
               onTap: () => setState(() {
                 widget.onSubmit(widget.controller.text);

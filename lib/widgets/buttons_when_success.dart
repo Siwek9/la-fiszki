@@ -17,19 +17,19 @@ class ButtonsWhenSuccess extends StatelessWidget {
         color: Colors.transparent,
         shadowColor: Colors.black,
         shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+        borderRadius: BorderRadius.all(Radius.circular(12.0)),
         child: Flex(
           direction: Axis.horizontal,
           children: [
             Expanded(
               child: FilledButton(
                 style: ButtonStyle(
-                  fixedSize: MaterialStatePropertyAll(Size.fromHeight(50)),
+                  fixedSize: MaterialStatePropertyAll(Size.fromHeight(60)),
                   backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary.withOpacity(1)),
                   foregroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.onSecondary),
                   shape: MaterialStatePropertyAll(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
                     ),
                   ),
                 ),

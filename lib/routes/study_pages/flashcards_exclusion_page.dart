@@ -31,7 +31,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("$cardNow/${widget.cards.length}"),
+          title: Text("${cardNow + 1}/${widget.cards.length}"),
         ),
         body: LayoutBuilder(builder: (context, BoxConstraints constraints) {
           return Column(children: [
@@ -138,6 +138,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              mode: "exclusion",
             ),
           ),
         );
@@ -161,6 +162,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               knownFlashcards: cardKnown,
               dontKnownFlashcards: cardDoesntKnown,
               flashcardData: widget.flashcardData,
+              mode: "exclusion",
             ),
           ),
         );
