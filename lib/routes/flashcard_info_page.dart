@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
@@ -64,21 +63,31 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: ListView.builder(
-          itemCount: widget.content.cards.length + 5,
+          itemCount: widget.content.cards.length + 6,
           itemBuilder: (context, index) {
             if (index == 0) {
               return FlashcardMainData(content: widget.content);
             } else if (index == 1) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+                child: Text(
+                  "Wyświetl jako pierwsze:",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              );
+            } else if (index == 2) {
               return ChooseSide(
+                frontSide: widget.content.frontSideName,
+                backSide: widget.content.backSideName,
                 onSelected: (sideIndex) {
                   side = sideIndex;
                 },
               );
-            } else if (index == 2) {
-              return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
             } else if (index == 3) {
-              return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
+              return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
             } else if (index == 4) {
+              return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
+            } else if (index == 5) {
               return Padding(
                 padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
                 child: Text(
@@ -90,7 +99,7 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
                 ),
               );
             } else {
-              index -= 5;
+              index -= 6;
               return CompareElements(
                 left: Text(
                   widget.content.cards[index].frontSide,
@@ -155,10 +164,14 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
 
 class ChooseSide extends StatefulWidget {
   final void Function(int sideIndex) onSelected;
+  final String frontSide;
+  final String backSide;
 
   const ChooseSide({
     super.key,
     required this.onSelected,
+    required this.frontSide,
+    required this.backSide,
   });
 
   @override
@@ -170,32 +183,78 @@ class _ChooseSideState extends State<ChooseSide> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return ToggleButtons(
-        renderBorder: false,
-        isSelected: selectedSide,
-        onPressed: (index) {
-          widget.onSelected(index);
-          setState(() {
-            if (index == 0) {
-              selectedSide = [true, false];
-            } else {
-              selectedSide = [false, true];
-            }
-          });
-        },
-        children: [
-          SizedBox(
-            width: (constraints.maxWidth / 2),
-            child: Text("pierwsza strona"),
-          ),
-          SizedBox(
-            width: (constraints.maxWidth / 2),
-            child: Text("druga strona"),
-          ),
-        ],
-      );
-    });
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: LayoutBuilder(builder: (context, constraints) {
+        return ToggleButtons(
+          // selectedColor: Colors.red,
+          renderBorder: false,
+          isSelected: selectedSide,
+          onPressed: (index) {
+            widget.onSelected(index);
+            setState(() {
+              if (index == 0) {
+                selectedSide = [true, false];
+              } else {
+                selectedSide = [false, true];
+              }
+            });
+          },
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color:
+                    selectedSide[0] ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onTertiary,
+                border: !selectedSide[0]
+                    ? Border.all(
+                        width: 3.0,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      )
+                    : null,
+              ),
+              height: constraints.maxHeight,
+              width: (constraints.maxWidth / 2),
+              child: Center(
+                child: Text(
+                  widget.frontSide,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: selectedSide[0]
+                        ? Theme.of(context).colorScheme.onTertiary
+                        : Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color:
+                    selectedSide[1] ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onTertiary,
+                border: !selectedSide[1]
+                    ? Border.all(
+                        width: 3.0,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      )
+                    : null,
+              ),
+              height: constraints.maxHeight,
+              width: (constraints.maxWidth / 2),
+              child: Center(
+                child: Text(
+                  widget.backSide,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: selectedSide[1]
+                        ? Theme.of(context).colorScheme.onTertiary
+                        : Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
+    );
   }
 }
 
