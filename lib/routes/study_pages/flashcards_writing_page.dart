@@ -143,6 +143,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                         }
                                       } else {
                                         whenUserKnow(widget.cards[cardNow]);
+                                        return true;
                                       }
                                     },
                                   ),
@@ -165,6 +166,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                         whenDontKnow: () {
                           setState(() {
                             prefixText = null;
+                            _myController.text = "";
                             hintText = sideContent("back");
                             statusValue = FlashcardTextInputStatus.error;
                           });
