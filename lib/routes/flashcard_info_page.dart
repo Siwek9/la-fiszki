@@ -41,8 +41,8 @@ class FlashcardInfoContent extends StatefulWidget {
 }
 
 class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
-  // int get side => 0;
   int side = 0;
+  bool randomOrder = true;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +67,14 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
           itemBuilder: (context, index) {
             if (index == 0) {
               return FlashcardMainData(content: widget.content);
+            } else if (index == 1) {
+              return LabeledCheckbox(
+                label: "Losowa kolejność fiszek:",
+                value: randomOrder,
+                onChanged: (value) => setState(() {
+                  randomOrder = value;
+                }),
+              );
             } else if (index == 1) {
               return Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
@@ -129,14 +137,18 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
 
   void openExclusionPage(BuildContext context) {
     Random random = Random();
-    var shuffleCards = List<FlashcardElement>.from(widget.content.cards);
-    shuffleCards.shuffle(random);
+
+    var cardsToSend = List<FlashcardElement>.from(widget.content.cards);
+    if (randomOrder) {
+      cardsToSend.shuffle(random);
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FlashcardsExclusionPage(
           flashcardData: widget.content,
-          cards: shuffleCards,
+          cards: cardsToSend,
           folderName: widget.folderName,
           firstSide: side,
         ),
@@ -146,16 +158,61 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
 
   void openWritingPage(BuildContext context) {
     Random random = Random();
-    var shuffleCards = List<FlashcardElement>.from(widget.content.cards);
-    shuffleCards.shuffle(random);
+    var cardsToSend = List<FlashcardElement>.from(widget.content.cards);
+    if (randomOrder) {
+      cardsToSend.shuffle(random);
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FlashcardsWritingPage(
           flashcardData: widget.content,
-          cards: shuffleCards,
+          cards: cardsToSend,
           folderName: widget.folderName,
           firstSide: side,
+        ),
+      ),
+    );
+  }
+}
+
+class LabeledCheckbox extends StatelessWidget {
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const LabeledCheckbox({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onChanged(!value);
+      },
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            Checkbox(
+              value: value,
+              onChanged: (bool? newValue) {
+                onChanged(newValue!);
+              },
+            ),
+          ],
         ),
       ),
     );
