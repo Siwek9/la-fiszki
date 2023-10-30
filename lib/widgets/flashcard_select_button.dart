@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/flashcards_storage.dart';
 import 'package:la_fiszki/routes/flashcard_info_page.dart';
+
+import 'dart:developer' as dev;
 
 class FlashcardSelectButton extends StatelessWidget {
   final CatalogueElement flashcardData;
@@ -16,6 +19,9 @@ class FlashcardSelectButton extends StatelessWidget {
       child: FilledButton(
           onPressed: () {
             moveToFlashCard(context, flashcardData);
+          },
+          onLongPress: () {
+            showFlashcardDialog(context);
           },
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -33,5 +39,35 @@ class FlashcardSelectButton extends StatelessWidget {
             builder: (context) => FlashcardsInfoPage(
                 folderName: flashcardData.folderName,
                 futureFlashcard: Flashcard.fromFolderName(flashcardData.folderName))));
+  }
+
+  void showFlashcardDialog(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            contentPadding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
+            title: Text(
+              flashcardData.name,
+              textAlign: TextAlign.center,
+            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: ListTile(
+                  tileColor: Theme.of(context).colorScheme.primary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  contentPadding: EdgeInsets.all(12.0),
+                  title: Text("Usuń fiszkę", textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
+                  onTap: () {
+                    FlashcardsStorage.deleteFlashcard(flashcardData.folderName);
+                    Navigator.pop(context);
+                  },
+                ),
+              )
+            ],
+          );
+        });
   }
 }

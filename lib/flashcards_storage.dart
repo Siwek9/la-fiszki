@@ -41,6 +41,17 @@ class FlashcardsStorage {
     return folderName;
   }
 
+  static Future<void> deleteFlashcard(String folderName) async {
+    var flashcardsMainDir = await getFlashcardsMainDirectory();
+
+    var flashcardFolder = Directory("${flashcardsMainDir.path}$folderName");
+    dev.log(flashcardFolder.path);
+
+    if (await flashcardFolder.exists()) {
+      await flashcardFolder.delete(recursive: true);
+    }
+  }
+
   static String _randomFolderName() {
     var rand = Random();
     const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
