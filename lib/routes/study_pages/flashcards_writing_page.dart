@@ -134,13 +134,15 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                           });
                                           return false;
                                         }
-                                      } else {
+                                      } else if (statusValue == FlashcardTextInputStatus.error) {
                                         if (value == sideContent("back")) {
                                           whenUserDontKnow(widget.cards[cardNow]);
                                           return true;
                                         } else {
                                           return false;
                                         }
+                                      } else {
+                                        whenUserKnow(widget.cards[cardNow]);
                                       }
                                     },
                                   ),
