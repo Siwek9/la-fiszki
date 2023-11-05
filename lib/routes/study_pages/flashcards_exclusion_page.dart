@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -20,13 +22,16 @@ class FlashcardsExclusionPage extends StatefulWidget {
 }
 
 class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
-  _FlashcardsExclusionPageState();
+  _FlashcardsExclusionPageState() {
+    // randomTranslate = Random().nextInt(widget.cards[cardNow].frontSide.length);
+  }
   int cardNow = 0;
   bool sideNow = true;
+  int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
 
-  String sideContent(String side) {
+  List<String> sideContent(String side) {
     if (side == "front") {
       if (widget.firstSide == 0) {
         return widget.cards[cardNow].frontSide;
@@ -44,6 +49,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
 
   @override
   Widget build(BuildContext context) {
+    randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -70,7 +76,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                         color: Theme.of(context).colorScheme.primary,
                         child: Center(
                           child: Text(
-                            sideNow ? sideContent("front") : sideContent("back"),
+                            sideNow ? sideContent("front")[randomTranslate!] : sideContent("back").join('\n'),
                             style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                   color: Theme.of(context).colorScheme.onPrimary,
                                 ),
@@ -167,6 +173,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     }
     setState(() {
       cardNow++;
+      randomTranslate = Random().nextInt(sideContent("front").length);
       sideNow = true;
     });
   }

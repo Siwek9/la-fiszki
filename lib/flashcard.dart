@@ -17,7 +17,9 @@ class Flashcard {
         author = "Unknown",
         frontSideName = "Default",
         backSideName = "Default",
-        cards = List<FlashcardElement>.from({FlashcardElement(frontSide: "", backSide: "")});
+        cards = List<FlashcardElement>.from({
+          FlashcardElement(frontSide: [""], backSide: [""])
+        });
 
   static bool isFlashcard(String fileContent) {
     late dynamic content;
@@ -68,14 +70,23 @@ class Flashcard {
     frontSideName = jsonObject['sideName']['front'];
     backSideName = jsonObject['sideName']['back'];
     cards = (jsonObject['cardboards'] as List<dynamic>)
-        .map((element) => FlashcardElement(frontSide: element['front'], backSide: element['back']))
+        .map((card) => FlashcardElement(frontSide: stringToList(card['front']), backSide: stringToList(card['back'])))
         .toList(growable: false);
   }
 }
 
+List<String> stringToList(dynamic element) {
+  if (element is String) {
+    return [element];
+  } else {
+    List<String> toReturn = (element as List<dynamic>).map((e) => e as String).toList();
+    return toReturn;
+  }
+}
+
 class FlashcardElement {
-  String frontSide;
-  String backSide;
+  List<String> frontSide;
+  List<String> backSide;
 
   FlashcardElement({required this.frontSide, required this.backSide});
 

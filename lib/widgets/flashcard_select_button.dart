@@ -4,6 +4,7 @@ import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
 import 'package:la_fiszki/routes/flashcard_info_page.dart';
 
+// ignore: unused_import
 import 'dart:developer' as dev;
 
 class FlashcardSelectButton extends StatelessWidget {

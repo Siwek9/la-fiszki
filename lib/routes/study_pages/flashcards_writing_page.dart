@@ -1,4 +1,6 @@
 // TODO pls clean this mess pls pls
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -29,11 +31,12 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
   String? hintText;
   String? prefixText;
+  int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
   final TextEditingController _myController = TextEditingController();
 
-  String sideContent(String side) {
+  List<String> sideContent(String side) {
     if (side == "front") {
       if (widget.firstSide == 0) {
         return widget.cards[cardNow].frontSide;
@@ -59,6 +62,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
 
   @override
   Widget build(BuildContext context) {
+    randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -100,7 +104,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  sideContent("front"),
+                                  sideContent("front")[randomTranslate!],
                                   style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                         color: Theme.of(context).colorScheme.onPrimary,
                                       ),
@@ -119,7 +123,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                     statusValue: statusValue,
                                     onSubmit: (value) {
                                       if (statusValue == FlashcardTextInputStatus.normal) {
-                                        if (((prefixText ?? "") + value) == sideContent("back")) {
+                                        if (sideContent("back").contains(((prefixText ?? "") + value))) {
                                           setState(() {
                                             statusValue = FlashcardTextInputStatus.success;
                                           });
@@ -129,13 +133,14 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                             oldAnswer = value;
                                             prefixText = null;
                                             _myController.text = "";
-                                            hintText = sideContent("back");
+                                            hintText = hintText ??
+                                                sideContent("back")[Random().nextInt(sideContent("back").length)];
                                             statusValue = FlashcardTextInputStatus.error;
                                           });
                                           return false;
                                         }
                                       } else if (statusValue == FlashcardTextInputStatus.error) {
-                                        if (value == sideContent("back")) {
+                                        if (sideContent("back").contains(value)) {
                                           whenUserDontKnow(widget.cards[cardNow]);
                                           return true;
                                         } else {
@@ -160,19 +165,20 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                       return ButtonsWhenNormal(
                         whenHint: () {
                           setState(() {
-                            prefixText = sideContent("back").characters.first;
+                            prefixText = prefixText ??
+                                sideContent("back")[Random().nextInt(sideContent("back").length)].characters.first;
                           });
                         },
                         whenDontKnow: () {
                           setState(() {
                             prefixText = null;
                             _myController.text = "";
-                            hintText = sideContent("back");
+                            hintText = sideContent("back")[Random().nextInt(sideContent("back").length)];
                             statusValue = FlashcardTextInputStatus.error;
                           });
                         },
                         whenSubmit: () {
-                          if (((prefixText ?? "") + _myController.text) == sideContent("back")) {
+                          if (sideContent("back").contains(((prefixText ?? "") + _myController.text))) {
                             setState(() {
                               statusValue = FlashcardTextInputStatus.success;
                             });
@@ -180,7 +186,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                             setState(() {
                               prefixText = null;
                               oldAnswer = _myController.text;
-                              hintText = sideContent("back");
+                              hintText = hintText ?? sideContent("back")[Random().nextInt(sideContent("back").length)];
                               _myController.text = "";
                               statusValue = FlashcardTextInputStatus.error;
                             });
@@ -196,7 +202,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                     } else {
                       return ButtonsWhenError(
                         whenRewritten: () {
-                          if (((prefixText ?? "") + _myController.text) == sideContent("back")) {
+                          if (sideContent("back").contains(((prefixText ?? "") + _myController.text))) {
                             whenUserDontKnow(widget.cards[cardNow]);
                           }
                         },

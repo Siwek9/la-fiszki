@@ -110,15 +110,13 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
               index -= 6;
               return CompareElements(
                 left: Text(
-                  widget.content.cards[index].frontSide,
-                  maxLines: 1,
+                  widget.content.cards[index].frontSide.join("\n"),
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                 ),
                 right: Text(
-                  widget.content.cards[index].backSide,
-                  maxLines: 1,
+                  widget.content.cards[index].backSide.join(" "),
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),

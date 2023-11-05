@@ -45,7 +45,6 @@ class FlashcardsStorage {
     var flashcardsMainDir = await getFlashcardsMainDirectory();
 
     var flashcardFolder = Directory("${flashcardsMainDir.path}$folderName");
-    dev.log(flashcardFolder.path);
 
     if (await flashcardFolder.exists()) {
       await flashcardFolder.delete(recursive: true);
