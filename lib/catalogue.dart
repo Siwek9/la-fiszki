@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
-
-import 'dart:developer' as dev;
-
 import 'package:path/path.dart';
 
-// import 'package:path/path.dart';
+// ignore: unused_import
+import 'dart:developer' as dev;
 
 class Catalogue {
   static Future<File> getFile() async {
@@ -21,17 +19,12 @@ class Catalogue {
 
   static Future<List<CatalogueElement>> getContent() async {
     var catalogue = await getFile();
-    dev.log(await catalogue.readAsString());
     var catalogueContent =
         (jsonDecode(await catalogue.readAsString()) as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
-    // var catalogueContent =
-    //     jsonDecode(await catalogue.readAsString()) as List<Map<String, dynamic>>? ?? List<Map<String, dynamic>>.empty();
-    dev.log(
-        catalogueContent.map((catalogueElement) => CatalogueElement.fromJson(catalogueElement)).toList().toString());
     return catalogueContent.map((catalogueElement) => CatalogueElement.fromJson(catalogueElement)).toList();
   }
 
-  static Future<bool> addElement(var element) async {
+  static Future<bool> addElement(CatalogueElement element) async {
     var content = await getContent();
     content.add(element);
     var catalogue = await getFile();
@@ -39,8 +32,15 @@ class Catalogue {
     return true;
   }
 
-  static bool isCatalogueElement(element) {
-    return element is Map<String, dynamic>;
+  // TODO add usecases for this function
+  static bool canBeCatalogueElement(element) {
+    if (!element is Map<String, dynamic>) return false;
+
+    var elementTyped = element as Map<String, dynamic>;
+    if (elementTyped.keys.length != 1) return false;
+    if (elementTyped[elementTyped.keys.first]['name'] == null) return false;
+
+    return true;
   }
 
   static Future<void> refreshFile() async {
@@ -52,8 +52,8 @@ class Catalogue {
 
     var fileStreamList = await (await FlashcardsStorage.getFlashcardsMainDirectory()).list().toList();
     for (var folder in fileStreamList) {
-      File rawFile = File("${folder.path}/raw.json");
-      dev.log(rawFile.path);
+      File rawFile = await FlashcardsStorage.getRawFile(basename(folder.path));
+
       if (!await rawFile.exists()) {
         folder.delete(recursive: true);
         continue;
@@ -65,14 +65,10 @@ class Catalogue {
       }
       newCatalogueContent
           .add(CatalogueElement(folderName: basename(folder.path), name: jsonDecode(fileContent)['name'] ?? ""));
-      // if (jsonDecode(fileContent)['name'] == "Zwierzątka") {
-      //   await folder.delete(recursive: true);
-      // }
     }
 
     await catalogue.create();
     catalogue.writeAsString(jsonEncode(newCatalogueContent));
-    // var fileStreamList = FlashcardsStorage.getFlashcardsMainDirectory().get
   }
 }
 
@@ -81,13 +77,10 @@ class CatalogueElement {
   CatalogueElement.fromJson(Map<String, dynamic> json) {
     folderName = json.keys.first;
     name = json[folderName].toString();
-    dev.log("$folderName $name");
   }
 
   late String folderName;
   late String name;
 
   Map toJson() => {folderName: name};
-
-  // String author;
 }

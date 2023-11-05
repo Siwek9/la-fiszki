@@ -5,6 +5,6 @@ class CreateFlashcard extends StatelessWidget {
 
   @override
   Widget build(Object context) {
-    return Text("create_cardboard");
+    return Text("create_flashcard");
   }
 }
