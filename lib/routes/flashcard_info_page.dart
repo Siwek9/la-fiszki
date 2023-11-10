@@ -54,8 +54,7 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
-              onTap: () => openExclusionPage(context),
-              child: Icon(Icons.play_arrow),
+              child: Icon(Icons.settings),
             ),
           )
         ],
