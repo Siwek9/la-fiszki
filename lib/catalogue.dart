@@ -70,6 +70,13 @@ class Catalogue {
     await catalogue.create();
     catalogue.writeAsString(jsonEncode(newCatalogueContent));
   }
+
+  static void deleteElement(String folderName) async {
+    var content = await getContent();
+    content.removeWhere((element) => element.folderName == folderName);
+    var catalogue = await getFile();
+    await catalogue.writeAsString(jsonEncode(content));
+  }
 }
 
 class CatalogueElement {

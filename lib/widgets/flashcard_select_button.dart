@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/catalogue.dart';
 import 'package:la_fiszki/flashcard.dart';
@@ -9,8 +10,9 @@ import 'dart:developer' as dev;
 
 class FlashcardSelectButton extends StatelessWidget {
   final CatalogueElement flashcardData;
+  final AsyncCallback onFlashcardDeleted;
 
-  const FlashcardSelectButton({super.key, required this.flashcardData});
+  const FlashcardSelectButton({super.key, required this.flashcardData, required this.onFlashcardDeleted});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,9 @@ class FlashcardSelectButton extends StatelessWidget {
                   contentPadding: EdgeInsets.all(12.0),
                   title: Text("Usuń fiszkę", textAlign: TextAlign.center, style: TextStyle(fontSize: 20)),
                   onTap: () {
-                    FlashcardsStorage.deleteFlashcard(flashcardData.folderName);
+                    FlashcardsStorage.deleteFlashcard(flashcardData.folderName)
+                        .then((_) => Catalogue.deleteElement(flashcardData.folderName))
+                        .then((_) => onFlashcardDeleted());
                     Navigator.pop(context);
                   },
                 ),

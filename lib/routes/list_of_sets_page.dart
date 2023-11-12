@@ -42,6 +42,7 @@ class _ListOfSetsPageState extends State<ListOfSetsPage> {
               refreshIndicatorKey: refreshIndicatorKey!,
               flashcardsData: snapshot.data!,
               onRefresh: _refreshFlashcard,
+              onFlashcardDeleted: _softRefreshFlashcard,
             );
           } else {
             return LoadingScreen();
@@ -68,14 +69,28 @@ class _ListOfSetsPageState extends State<ListOfSetsPage> {
       _getFlashcardsData = SynchronousFuture(newFlashcardData);
     });
   }
+
+  Future<void> _softRefreshFlashcard() async {
+    var newFlashcardData = await Catalogue.getContent();
+
+    setState(() {
+      _getFlashcardsData = SynchronousFuture(newFlashcardData);
+    });
+  }
 }
 
 class FlashcardsLoaded extends StatelessWidget {
   final List<CatalogueElement> flashcardsData;
   final AsyncCallback onRefresh;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
+  final AsyncCallback onFlashcardDeleted;
+
   const FlashcardsLoaded(
-      {super.key, required this.flashcardsData, required this.onRefresh, required this.refreshIndicatorKey});
+      {super.key,
+      required this.flashcardsData,
+      required this.onRefresh,
+      required this.refreshIndicatorKey,
+      required this.onFlashcardDeleted});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +99,10 @@ class FlashcardsLoaded extends StatelessWidget {
       onRefresh: onRefresh,
       child: ListView.builder(
           itemCount: flashcardsData.length,
-          itemBuilder: (context, index) => FlashcardSelectButton(flashcardData: flashcardsData[index])),
+          itemBuilder: (context, index) => FlashcardSelectButton(
+                flashcardData: flashcardsData[index],
+                onFlashcardDeleted: onFlashcardDeleted,
+              )),
     );
   }
 }
