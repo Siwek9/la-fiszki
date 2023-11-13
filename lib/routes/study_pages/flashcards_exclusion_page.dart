@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -22,9 +23,7 @@ class FlashcardsExclusionPage extends StatefulWidget {
 }
 
 class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
-  _FlashcardsExclusionPageState() {
-    // randomTranslate = Random().nextInt(widget.cards[cardNow].frontSide.length);
-  }
+  _FlashcardsExclusionPageState();
   int cardNow = 0;
   bool sideNow = true;
   int? randomTranslate;
@@ -74,12 +73,16 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                     children: [
                       Card(
                         color: Theme.of(context).colorScheme.primary,
-                        child: Center(
-                          child: Text(
-                            sideNow ? sideContent("front")[randomTranslate!] : sideContent("back").join('\n'),
-                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Center(
+                            child: AutoSizeText(
+                              sideNow ? sideContent("front")[randomTranslate!] : sideContent("back").join('\n'),
+                              style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                   color: Theme.of(context).colorScheme.onPrimary,
-                                ),
+                                  fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),

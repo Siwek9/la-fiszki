@@ -1,6 +1,7 @@
 // TODO pls clean this mess pls pls
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -103,11 +104,17 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                             Expanded(
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text(
-                                  sideContent("front")[randomTranslate!],
-                                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(32.0),
+                                  child: Center(
+                                    child: AutoSizeText(
+                                      sideContent("front")[randomTranslate!],
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                          fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
