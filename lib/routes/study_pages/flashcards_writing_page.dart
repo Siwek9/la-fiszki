@@ -214,7 +214,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                           }
                         },
                         whenWasRight: () {
-                          if (oldAnswer != "") {
+                          if (oldAnswer != null && oldAnswer != "") {
                             setState(() {
                               _myController.text = oldAnswer!;
                               statusValue = FlashcardTextInputStatus.success;
