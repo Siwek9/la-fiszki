@@ -440,17 +440,19 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 15.0,
-                bottom: 15.0,
-                left: 48.0,
-              ),
-              child: Text(
-                widget.hintText ?? "",
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
-                    ),
+            IgnorePointer(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 15.0,
+                  left: 48.0,
+                ),
+                child: Text(
+                  widget.hintText ?? "",
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
+                      ),
+                ),
               ),
             )
           ],
