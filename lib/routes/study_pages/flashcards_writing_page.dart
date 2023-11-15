@@ -393,71 +393,82 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
   late ScrollController _textFieldScrollController;
   late ScrollController _textHintScrollController;
 
+  Size _textSize(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+        text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
+    return textPainter.size;
+  }
+  
+
   @override
   Widget build(BuildContext context) {
+    // final String text = "Text in one line";
+    final TextStyle textStyle = Theme.of(context).textTheme.titleLarge!;
+    //final Size txtSize = _textSize("siur", textStyle);
+    //dev.log(txtSize.width.toString());
     return ValueListenableBuilder(
       valueListenable: _myFocusNotifier,
       builder: (context, isFocus, child) {
         return Stack(
           children: [
-            SizedBox(
-              height: 100.0,
-              child: TextField(
-                scrollController: _textFieldScrollController,
-                // autocorrect: false,
-                textAlignVertical: TextAlignVertical.top,
-                controller: widget.controller,
-                onSubmitted: (value) => setState(() {
-                  widget.onSubmit(value);
-                }),
-                focusNode: _myFocusNode,
-                autofocus: true,
-                enableSuggestions: false,
-                keyboardType: TextInputType.emailAddress, // for turning off autocorrect
-                minLines: 1,
-                maxLines: 2,
-                clipBehavior: Clip.hardEdge,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                cursorColor: Colors.white,
-                cursorOpacityAnimates: true,
-                decoration: InputDecoration(
-                  isCollapsed: true,
-                  hintText: widget.hintText == null ? "Wpisz tekst" : null,
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-                  prefixText: widget.prefixText,
-                  prefixIcon: () {
-                    if (widget.statusValue == FlashcardTextInputStatus.error) {
-                      return Icon(Icons.close, color: Colors.white);
-                    } else if (widget.statusValue == FlashcardTextInputStatus.success) {
-                      return Icon(Icons.done, color: Colors.white);
-                    } else {
-                      return null;
-                    }
-                  }(),
-                  suffixIcon: GestureDetector(
-                    onTap: () => setState(() {
-                      widget.onSubmit(widget.controller.text);
-                    }),
-                    child: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    ),
+            TextField(
+              onChanged: (text) {
+                  final Size txtSize = _textSize(text, textStyle);
+                  dev.log("TExt size '$text': ${txtSize.width}");
+              },
+              scrollController: _textFieldScrollController,
+              // autocorrect: false,
+              textAlignVertical: TextAlignVertical.top,
+              controller: widget.controller,
+              onSubmitted: (value) => setState(() {
+                widget.onSubmit(value);
+              }),
+              focusNode: _myFocusNode,
+              autofocus: true,
+              enableSuggestions: false,
+              keyboardType: TextInputType.emailAddress, // for turning off autocorrect
+              clipBehavior: Clip.hardEdge,
+              style: textStyle.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
+              cursorColor: Colors.white,
+              cursorOpacityAnimates: true,
+              decoration: InputDecoration(
+                isCollapsed: true,
+                hintText: widget.hintText == null ? "Wpisz tekst" : null,
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                prefixText: widget.prefixText,
+                prefixIcon: () {
+                  if (widget.statusValue == FlashcardTextInputStatus.error) {
+                    return Icon(Icons.close, color: Colors.white);
+                  } else if (widget.statusValue == FlashcardTextInputStatus.success) {
+                    return Icon(Icons.done, color: Colors.white);
+                  } else {
+                    return null;
+                  }
+                }(),
+                suffixIcon: GestureDetector(
+                  onTap: () => setState(() {
+                    widget.onSubmit(widget.controller.text);
+                  }),
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.white,
                   ),
-                  filled: true,
-                  fillColor: setFilledColor(isFocus),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7.5),
-                    borderSide: BorderSide(width: 0, color: Colors.transparent),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
+                ),
+                filled: true,
+                fillColor: setFilledColor(isFocus),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7.5),
+                  borderSide: BorderSide(width: 0, color: Colors.transparent),
                 ),
               ),
             ),
@@ -470,37 +481,13 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
                     left: 48.0,
                     right: 48.0,
                   ),
-                  child: OverflowBox(
-                    child: Text(
-                      widget.hintText ?? "",
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
-                          ),
-
-                      // Positioned.fill(
-                      //   // top: 15.0,
-                      //   // bottom: 15.0,
-                      //   child: IgnorePointer(
-                      //     child: Padding(
-                      //       padding: const EdgeInsets.only(
-                      //         top: 15.0,
-                      //         left: 48.0,
-                      //         right: 48.0,
-                      //         bottom: 15.0,
-                      //       ),
-                      //       child: SingleChildScrollView(
-                      //         controller: _textHintScrollController,
-                      //         child: OverflowBox(
-                      //           child: Text(
-                      //             "la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la la ",
-                      //             // widget.hintText ?? "",
-                      //             style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      //                   color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
-                      //                 ),
-                      //           ),
-                      //         ),
-                      //       ),
-                    ),
+                  child: Text(
+                    widget.hintText ?? "",
+                    overflow: TextOverflow.fade,
+                    // softWrap: false,
+                    style: textStyle.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
+                        ),
                   ),
                 ),
               ),
