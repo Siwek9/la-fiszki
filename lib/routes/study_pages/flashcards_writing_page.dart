@@ -33,7 +33,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
   String? hintText;
   String? prefixText;
-  int? randomTranslate;
+  // int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
   final TextEditingController _myController = TextEditingController();
@@ -64,7 +64,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
 
   @override
   Widget build(BuildContext context) {
-    randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
+    // randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -109,7 +109,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                                   padding: const EdgeInsets.all(32.0),
                                   child: Center(
                                     child: AutoSizeText(
-                                      sideContent("front")[randomTranslate!],
+                                      sideContent("front")[Random().nextInt(sideContent("front").length)],
                                       style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                           color: Theme.of(context).colorScheme.onPrimary,
                                           fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
@@ -394,12 +394,11 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
   late ScrollController _textHintScrollController;
 
   Size _textSize(String text, TextStyle style) {
-    final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
-      ..layout(minWidth: 0, maxWidth: double.infinity);
+    final TextPainter textPainter =
+        TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+          ..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -414,8 +413,8 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
           children: [
             TextField(
               onChanged: (text) {
-                  final Size txtSize = _textSize(text, textStyle);
-                  dev.log("TExt size '$text': ${txtSize.width}");
+                final Size txtSize = _textSize(text, textStyle);
+                dev.log("TExt size '$text': ${txtSize.width}");
               },
               scrollController: _textFieldScrollController,
               // autocorrect: false,
@@ -430,8 +429,8 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
               keyboardType: TextInputType.emailAddress, // for turning off autocorrect
               clipBehavior: Clip.hardEdge,
               style: textStyle.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               cursorColor: Colors.white,
               cursorOpacityAnimates: true,
               decoration: InputDecoration(
@@ -486,8 +485,8 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
                     overflow: TextOverflow.fade,
                     // softWrap: false,
                     style: textStyle.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
-                        ),
+                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
+                    ),
                   ),
                 ),
               ),

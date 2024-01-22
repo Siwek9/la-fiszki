@@ -26,7 +26,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
   _FlashcardsExclusionPageState();
   int cardNow = 0;
   bool sideNow = true;
-  int? randomTranslate;
+  // int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
 
@@ -48,7 +48,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
 
   @override
   Widget build(BuildContext context) {
-    randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
+    // randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -77,7 +77,9 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                           padding: const EdgeInsets.all(32.0),
                           child: Center(
                             child: AutoSizeText(
-                              sideNow ? sideContent("front")[randomTranslate!] : sideContent("back").join('\n'),
+                              sideNow
+                                  ? sideContent("front")[Random().nextInt(sideContent("front").length)]
+                                  : sideContent("back").join('/\n'),
                               style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                   color: Theme.of(context).colorScheme.onPrimary,
                                   fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
@@ -176,7 +178,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     }
     setState(() {
       cardNow++;
-      randomTranslate = Random().nextInt(sideContent("front").length);
+      //randomTranslate = Random().nextInt(sideContent("front").length);
       sideNow = true;
     });
   }
