@@ -1,6 +1,7 @@
 // TODO pls clean this mess pls pls
 import 'dart:math';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -11,6 +12,7 @@ import 'dart:developer' as dev;
 
 import 'package:la_fiszki/widgets/buttons_when_normal.dart';
 import 'package:la_fiszki/widgets/buttons_when_success.dart';
+import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 class FlashcardsWritingPage extends StatefulWidget {
   final int firstSide;
@@ -31,7 +33,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
   FlashcardTextInputStatus statusValue = FlashcardTextInputStatus.normal;
   String? hintText;
   String? prefixText;
-  int? randomTranslate;
+  // int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
   List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
   final TextEditingController _myController = TextEditingController();
@@ -62,7 +64,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
 
   @override
   Widget build(BuildContext context) {
-    randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
+    // randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -103,11 +105,17 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                             Expanded(
                               child: Align(
                                 alignment: Alignment.center,
-                                child: Text(
-                                  sideContent("front")[randomTranslate!],
-                                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(32.0),
+                                  child: Center(
+                                    child: AutoSizeText(
+                                      sideContent("front")[Random().nextInt(sideContent("front").length)],
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                          fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -207,7 +215,7 @@ class _FlashcardsWritingPageState extends State<FlashcardsWritingPage> {
                           }
                         },
                         whenWasRight: () {
-                          if (oldAnswer != "") {
+                          if (oldAnswer != null && oldAnswer != "") {
                             setState(() {
                               _myController.text = oldAnswer!;
                               statusValue = FlashcardTextInputStatus.success;
@@ -339,6 +347,8 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
   late FocusNode _myFocusNode;
   final ValueNotifier<bool> _myFocusNotifier = ValueNotifier<bool>(false);
   // final TextEditingController _myController = TextEditingController();
+  int fieldLines = 2;
+  int numLines = 0;
 
   @override
   void initState() {
@@ -346,6 +356,10 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
 
     _myFocusNode = FocusNode();
     _myFocusNode.addListener(_onFocusChange);
+
+    _scrollControllerGroup = LinkedScrollControllerGroup();
+    _textFieldScrollController = _scrollControllerGroup.addAndGet();
+    _textHintScrollController = _scrollControllerGroup.addAndGet();
   }
 
   @override
@@ -354,6 +368,9 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
     _myFocusNode.dispose();
     _myFocusNotifier.dispose();
     // widget.controller.dispose();
+
+    _textFieldScrollController.dispose();
+    _textHintScrollController.dispose();
 
     super.dispose();
   }
@@ -372,64 +389,109 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
     }
   }
 
+  late LinkedScrollControllerGroup _scrollControllerGroup;
+  late ScrollController _textFieldScrollController;
+  late ScrollController _textHintScrollController;
+
+  Size _textSize(String text, TextStyle style) {
+    final TextPainter textPainter =
+        TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+          ..layout(minWidth: 0, maxWidth: double.infinity);
+    return textPainter.size;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // final String text = "Text in one line";
+    final TextStyle textStyle = Theme.of(context).textTheme.titleLarge!;
+    //final Size txtSize = _textSize("siur", textStyle);
+    //dev.log(txtSize.width.toString());
     return ValueListenableBuilder(
       valueListenable: _myFocusNotifier,
       builder: (context, isFocus, child) {
-        return TextField(
-          // autocorrect: false,
-          controller: widget.controller,
-          onSubmitted: (value) => setState(() {
-            widget.onSubmit(value);
-          }),
-          focusNode: _myFocusNode,
-          autofocus: true,
-          enableSuggestions: false,
-          keyboardType: TextInputType.emailAddress, // for turning off autocorrect
-          maxLines: 1,
-          clipBehavior: Clip.hardEdge,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-          cursorColor: Colors.white,
-          cursorOpacityAnimates: true,
-          decoration: InputDecoration(
-            hintText: widget.hintText ?? "Wpisz tekst",
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-            prefixText: widget.prefixText,
-            prefixIcon: () {
-              if (widget.statusValue == FlashcardTextInputStatus.error) {
-                return Icon(Icons.close, color: Colors.white);
-              } else if (widget.statusValue == FlashcardTextInputStatus.success) {
-                return Icon(Icons.done, color: Colors.white);
-              } else {
-                return null;
-              }
-            }(),
-            suffixIcon: GestureDetector(
-              onTap: () => setState(() {
-                widget.onSubmit(widget.controller.text);
+        return Stack(
+          children: [
+            TextField(
+              onChanged: (text) {
+                final Size txtSize = _textSize(text, textStyle);
+                dev.log("TExt size '$text': ${txtSize.width}");
+              },
+              scrollController: _textFieldScrollController,
+              // autocorrect: false,
+              textAlignVertical: TextAlignVertical.top,
+              controller: widget.controller,
+              onSubmitted: (value) => setState(() {
+                widget.onSubmit(value);
               }),
-              child: Icon(
-                Icons.send,
-                color: Colors.white,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                width: 1,
+              focusNode: _myFocusNode,
+              autofocus: true,
+              enableSuggestions: false,
+              keyboardType: TextInputType.emailAddress, // for turning off autocorrect
+              clipBehavior: Clip.hardEdge,
+              style: textStyle.copyWith(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
+              cursorColor: Colors.white,
+              cursorOpacityAnimates: true,
+              decoration: InputDecoration(
+                isCollapsed: true,
+                hintText: widget.hintText == null ? "Wpisz tekst" : null,
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                prefixText: widget.prefixText,
+                prefixIcon: () {
+                  if (widget.statusValue == FlashcardTextInputStatus.error) {
+                    return Icon(Icons.close, color: Colors.white);
+                  } else if (widget.statusValue == FlashcardTextInputStatus.success) {
+                    return Icon(Icons.done, color: Colors.white);
+                  } else {
+                    return null;
+                  }
+                }(),
+                suffixIcon: GestureDetector(
+                  onTap: () => setState(() {
+                    widget.onSubmit(widget.controller.text);
+                  }),
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                filled: true,
+                fillColor: setFilledColor(isFocus),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(7.5),
+                  borderSide: BorderSide(width: 0, color: Colors.transparent),
+                ),
+              ),
             ),
-            filled: true,
-            fillColor: setFilledColor(isFocus),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.5),
-              borderSide: BorderSide(width: 0, color: Colors.transparent),
-            ),
-          ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 15.0,
+                    bottom: 15.0,
+                    left: 48.0,
+                    right: 48.0,
+                  ),
+                  child: Text(
+                    widget.hintText ?? "",
+                    overflow: TextOverflow.fade,
+                    // softWrap: false,
+                    style: textStyle.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
         );
       },
     );

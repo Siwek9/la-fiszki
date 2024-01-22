@@ -54,80 +54,76 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
-              onTap: () => openExclusionPage(context),
-              child: Icon(Icons.play_arrow),
+              child: Icon(Icons.settings),
             ),
           )
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: ListView.builder(
-          itemCount: widget.content.cards.length + 6,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return FlashcardMainData(content: widget.content);
-            } else if (index == 1) {
-              return LabeledCheckbox(
-                label: "Losowa kolejność fiszek:",
-                value: randomOrder,
-                onChanged: (value) => setState(() {
-                  randomOrder = value;
-                }),
-              );
-            } else if (index == 1) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
-                child: Text(
-                  "Wyświetl jako pierwsze:",
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              );
-            } else if (index == 2) {
-              return ChooseSide(
-                frontSide: widget.content.frontSideName,
-                backSide: widget.content.backSideName,
-                onSelected: (sideIndex) {
-                  side = sideIndex;
-                },
-              );
-            } else if (index == 3) {
-              return StartStudyingButton(onPressed: () => openExclusionPage(context), modeName: "Wykluczanie");
-            } else if (index == 4) {
-              return StartStudyingButton(onPressed: () => openWritingPage(context), modeName: "Pisanie");
-            } else if (index == 5) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
-                child: Text(
-                  "Lista Fiszek:",
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              );
-            } else {
-              index -= 6;
-              return CompareElements(
-                left: Text(
-                  widget.content.cards[index].frontSide.join("\n"),
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                ),
-                right: Text(
-                  widget.content.cards[index].backSide.join(" "),
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                ),
-                compare: Icon(
-                  Icons.arrow_forward_sharp,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              );
-            }
-          },
+        child: ListView(
+          children: [
+            FlashcardMainData(
+              content: widget.content,
+            ),
+            LabeledCheckbox(
+              label: "Losowa kolejność fiszek:",
+              value: randomOrder,
+              onChanged: (value) => setState(() {
+                randomOrder = value;
+              }),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
+              child: Text(
+                "Wyświetl jako pierwsze:",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ChooseSide(
+              frontSide: widget.content.frontSideName,
+              backSide: widget.content.backSideName,
+              onSelected: (sideIndex) {
+                side = sideIndex;
+              },
+            ),
+            StartStudyingButton(
+              onPressed: () => openExclusionPage(context),
+              modeName: "Wykluczanie",
+            ),
+            StartStudyingButton(
+              onPressed: () => openWritingPage(context),
+              modeName: "Pisanie",
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
+              child: Text(
+                "Lista Fiszek:",
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+            ...widget.content.cards.map((card) => CompareElements(
+                  left: Text(
+                    card.frontSide.join("\n"),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
+                  right: Text(
+                    card.backSide.join(" "),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
+                  compare: Icon(
+                    Icons.arrow_forward_sharp,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                )),
+          ],
         ),
       ),
     );
