@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:la_fiszki/saved_set_data.dart';
 import 'package:path_provider/path_provider.dart';
 
 // ignore: unused_import
@@ -55,5 +56,65 @@ class FlashcardsStorage {
     var rand = Random();
     const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     return List.generate(20, (index) => chars[rand.nextInt(chars.length)]).join();
+  }
+
+  static bool _isSaving = false;
+
+  static Future<void> trySaveProgress(SavedSetData savedData, String folderName) async {
+    if (_isSaving) return;
+
+    _isSaving = true;
+
+    print(jsonEncode(savedData));
+
+    var flashcardsMainDir = await getFlashcardsMainDirectory();
+
+    var flashcardSave = File("${flashcardsMainDir.path}$folderName/save.json");
+
+    if (!await flashcardSave.exists()) {
+      await flashcardSave.create();
+    }
+
+    await flashcardSave.writeAsString(jsonEncode(savedData));
+
+    _isSaving = false;
+  }
+
+  static Future<void> saveProgress(SavedSetData savedData, String folderName) async {
+    while (_isSaving) {}
+
+    _isSaving = true;
+
+    print(jsonEncode(savedData));
+
+    var flashcardsMainDir = await getFlashcardsMainDirectory();
+
+    var flashcardSave = File("${flashcardsMainDir.path}$folderName/save.json");
+
+    if (!await flashcardSave.exists()) {
+      await flashcardSave.create();
+    }
+
+    await flashcardSave.writeAsString(jsonEncode(savedData));
+
+    _isSaving = false;
+  }
+
+  static Future<void> deleteSave(String folderName) async {
+    while (_isSaving) {}
+
+    _isSaving = true;
+
+    print("remove save");
+
+    var flashcardsMainDir = await getFlashcardsMainDirectory();
+
+    var flashcardSave = File("${flashcardsMainDir.path}$folderName/save.json");
+
+    if (await flashcardSave.exists()) {
+      await flashcardSave.delete();
+    }
+
+    _isSaving = false;
   }
 }

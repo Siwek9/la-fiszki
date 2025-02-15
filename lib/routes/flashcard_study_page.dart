@@ -1,17 +1,25 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcard_element.dart';
+import 'package:la_fiszki/flashcards_storage.dart';
 import 'package:la_fiszki/routes/flashcard_summary.dart';
+import 'package:la_fiszki/saved_set_data.dart';
 import 'package:la_fiszki/widgets/prevent_from_losing_progress_dialog.dart';
 
 class FlashcardStudyPage extends StatefulWidget {
-  const FlashcardStudyPage(
-      {super.key, required this.cards, required this.folderName, required this.flashcardData, required this.firstSide});
+  const FlashcardStudyPage({
+    super.key,
+    required this.folderName,
+    required this.flashcardData,
+    required this.savedData,
+  });
 
-  final int firstSide;
-  final List<FlashcardElement> cards;
   final String folderName;
   final Flashcard flashcardData;
+  final SavedSetData savedData;
 
   @override
   State<StatefulWidget> createState() => FlashcardStudyPageState();
@@ -20,12 +28,45 @@ class FlashcardStudyPage extends StatefulWidget {
 class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
   int cardNow = 0;
   bool sideNow = true;
-  List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
-  List<FlashcardElement> cardDoesNotKnown = List<FlashcardElement>.empty(growable: true);
 
-  // late BoxConstraints constraints;
+  int numberCardKnown = 0;
+  int numberCardNotKnown = 0;
+
+  List<(int, FlashcardElement)> studiedCards = List<(int, FlashcardElement)>.empty(growable: true);
+
   String get mode {
     return "none";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    print(widget.savedData.dataValues.toString());
+    var studiedCardsIndexes = widget.savedData.dataValues
+        .where((value) => value.maxRound >= widget.savedData.currentRound)
+        .map((value) => value.id);
+
+    print(studiedCardsIndexes.length);
+
+    studiedCards = widget.flashcardData.cards.indexed
+        .where((value) => studiedCardsIndexes.contains(value.$1))
+        // .map((value) => value.$2)
+        .toList();
+
+    if (widget.savedData.isRandom) {
+      Random random = Random(widget.savedData.seed!);
+      studiedCards.shuffle(random);
+    }
+
+    for (var i = 0; i < studiedCards.length; i++) {
+      if (widget.savedData.dataValues[studiedCards[i].$1].maxRound == widget.savedData.currentRound) {
+        cardNow = i;
+        break;
+      }
+    }
+
+    print(studiedCards.toString());
   }
 
   @override
@@ -35,7 +76,7 @@ class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
       child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: Text("${cardNow + 1}/${widget.cards.length}"),
+            title: Text("${cardNow + 1}/${studiedCards.length}"),
           ),
           body: child),
     );
@@ -43,16 +84,16 @@ class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
 
   List<String> sideContent(String side) {
     if (side == "front") {
-      if (widget.firstSide == 0) {
-        return widget.cards[cardNow].frontSide;
+      if (!widget.savedData.reverseSides) {
+        return studiedCards[cardNow].$2.frontSide;
       } else {
-        return widget.cards[cardNow].backSide;
+        return studiedCards[cardNow].$2.backSide;
       }
     } else {
-      if (widget.firstSide == 0) {
-        return widget.cards[cardNow].backSide;
+      if (!widget.savedData.reverseSides) {
+        return studiedCards[cardNow].$2.backSide;
       } else {
-        return widget.cards[cardNow].frontSide;
+        return studiedCards[cardNow].$2.frontSide;
       }
     }
   }
@@ -68,19 +109,20 @@ class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
   }
 
   void whenUserKnow(FlashcardElement card) {
-    cardKnown.add(card);
-    if (cardNow == widget.cards.length - 1) {
+    numberCardKnown++;
+    if (cardNow == studiedCards.length - 1) {
       Navigator.of(context)
         ..pop()
         ..push(
           MaterialPageRoute(
             builder: (context) => FlashcardSummary(
               folderName: widget.folderName,
-              knownFlashcards: cardKnown,
-              doNotKnownFlashcards: cardDoesNotKnown,
               flashcardData: widget.flashcardData,
-              firstSide: widget.firstSide,
-              mode: mode,
+              savedData: widget.savedData,
+              // knownFlashcards: cardKnown,
+              // doNotKnownFlashcards: cardDoesNotKnown,
+              // firstSide: 1,
+              // mode: mode,
             ),
           ),
         );
@@ -90,22 +132,28 @@ class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
       cardNow++;
       sideNow = true;
     });
+
+    if ((cardNow - 1) % 5 == 0) {
+      FlashcardsStorage.trySaveProgress(widget.savedData, widget.folderName);
+    }
   }
 
   void whenUserDoNotKnow(FlashcardElement card) {
-    cardDoesNotKnown.add(card);
-    if (cardNow == widget.cards.length - 1) {
+    numberCardNotKnown++;
+    widget.savedData.dataValues[studiedCards[cardNow].$1].maxRound++;
+    if (cardNow == studiedCards.length - 1) {
       Navigator.of(context)
         ..pop()
         ..push(
           MaterialPageRoute(
             builder: (context) => FlashcardSummary(
               folderName: widget.folderName,
-              knownFlashcards: cardKnown,
-              doNotKnownFlashcards: cardDoesNotKnown,
               flashcardData: widget.flashcardData,
-              firstSide: widget.firstSide,
-              mode: mode,
+              savedData: widget.savedData,
+              // knownFlashcards: cardKnown,
+              // doNotKnownFlashcards: cardDoesNotKnown,
+              // firstSide: 1,
+              // mode: mode,
             ),
           ),
         );
@@ -115,5 +163,9 @@ class FlashcardStudyPageState<T extends FlashcardStudyPage> extends State<T> {
       cardNow++;
       sideNow = true;
     });
+
+    if ((cardNow - 1) % 5 == 0) {
+      FlashcardsStorage.trySaveProgress(widget.savedData, widget.folderName);
+    }
   }
 }

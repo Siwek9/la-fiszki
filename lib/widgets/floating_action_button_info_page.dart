@@ -110,7 +110,6 @@ class _FloatingActionButtonInfoPageState extends State<FloatingActionButtonInfoP
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          // elevation: 4,
           child: InkWell(
             onTap: _toggle,
             customBorder: StarBorder.polygon(

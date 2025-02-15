@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/routes/flashcard_study_page.dart';
 import 'package:la_fiszki/widgets/flashcard_panel.dart';
 import 'package:la_fiszki/widgets/flashcard_side_text.dart';
@@ -13,12 +14,14 @@ import 'package:la_fiszki/widgets/writing_answer_buttons.dart';
 import 'dart:developer' as dev;
 
 class FlashcardsWritingPage extends FlashcardStudyPage {
-  const FlashcardsWritingPage(
-      {super.key,
-      required super.cards,
-      required super.folderName,
-      required super.flashcardData,
-      required super.firstSide});
+  const FlashcardsWritingPage({
+    super.key,
+    required List<FlashcardElement> cards,
+    required super.folderName,
+    required super.flashcardData,
+    required int firstSide,
+    required super.savedData,
+  });
 
   @override
   State createState() => _FlashcardsWritingPageState();
@@ -53,8 +56,8 @@ class _FlashcardsWritingPageState extends FlashcardStudyPageState<FlashcardsWrit
           children: [
             FlashcardPanel(
               height: constraints.maxHeight - constraints.maxHeight / 4,
-              topChild: FlashcardSideText(
-                  widget.firstSide == 0 ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName),
+              topChild:
+                  FlashcardSideText(1 == 0 ? widget.flashcardData.frontSideName : widget.flashcardData.backSideName),
               centerChild: FlashcardTextContent(sideContent("front")[Random().nextInt(sideContent("front").length)]),
               bottomChild: FlashcardTextInputField(
                 prefixText: prefixText,
@@ -80,13 +83,13 @@ class _FlashcardsWritingPageState extends FlashcardStudyPageState<FlashcardsWrit
                     }
                   } else if (statusValue == FlashcardTextInputStatus.error) {
                     if (sideContent("back").contains(value)) {
-                      whenUserDoNotKnow(widget.cards[cardNow]);
+                      whenUserDoNotKnow(studiedCards[cardNow].$2);
                       return true;
                     } else {
                       return false;
                     }
                   } else {
-                    whenUserKnow(widget.cards[cardNow]);
+                    whenUserKnow(studiedCards[cardNow].$2);
                     return true;
                   }
                 },
@@ -147,7 +150,7 @@ class _FlashcardsWritingPageState extends FlashcardStudyPageState<FlashcardsWrit
                   WritingAnswerButtonPart(
                     text: "Kontynuuj",
                     onPressed: () {
-                      whenUserKnow(widget.cards[cardNow]);
+                      whenUserKnow(studiedCards[cardNow].$2);
                     },
                     backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(1),
                     size: 1,
@@ -172,7 +175,7 @@ class _FlashcardsWritingPageState extends FlashcardStudyPageState<FlashcardsWrit
                     text: "Kontynuuj",
                     onPressed: () {
                       if (sideContent("back").contains(((prefixText ?? "") + _myController.text))) {
-                        whenUserDoNotKnow(widget.cards[cardNow]);
+                        whenUserDoNotKnow(studiedCards[cardNow].$2);
                       }
                     },
                     backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(1),

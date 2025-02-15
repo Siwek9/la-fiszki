@@ -4,6 +4,7 @@
 - add button for choosing option described above, (✓)
 - number of answers on button in "choosing" mode, (✓)
 - adjust font size in main menu, (✓)
+- now summary screen is showing whole number of known flashcard instead of known flashcards in this round, (✓)
 - add option that allow to flip flashcards after wrong answer in "writing" mode, (x)
 - ignore white spaces at start and at the end of an answer in "writing" mode, (x)
 

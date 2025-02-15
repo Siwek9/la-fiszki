@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
@@ -5,6 +6,7 @@ import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/routes/flashcard_main_data.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
+import 'package:la_fiszki/saved_set_data.dart';
 import 'package:la_fiszki/widgets/floating_action_button_info_page.dart';
 import 'package:la_fiszki/widgets/labeled_checkbox.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
@@ -16,19 +18,26 @@ import 'dart:developer' as dev;
 import 'package:la_fiszki/widgets/switch_button.dart';
 
 class FlashcardsInfoPage extends StatelessWidget {
-  final Future<Flashcard> futureFlashcard;
+  final Future<(Flashcard, SavedSetData?)> futureFlashcard;
   final String folderName;
-  const FlashcardsInfoPage({super.key, required this.folderName, required this.futureFlashcard});
+  const FlashcardsInfoPage({
+    super.key,
+    required this.folderName,
+    required this.futureFlashcard,
+    // required this.saveData,
+  });
 
   @override
   Widget build(BuildContext context) {
+    print("seksik");
     return FutureBuilder(
       future: futureFlashcard,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
           return FlashcardInfoContent(
-            content: snapshot.data!,
+            content: snapshot.data!.$1,
             folderName: folderName,
+            saveData: snapshot.data!.$2,
           );
         } else {
           return LoadingScreen();
@@ -41,7 +50,14 @@ class FlashcardsInfoPage extends StatelessWidget {
 class FlashcardInfoContent extends StatefulWidget {
   final Flashcard content;
   final String folderName;
-  const FlashcardInfoContent({super.key, required this.folderName, required this.content});
+  final SavedSetData? saveData;
+
+  const FlashcardInfoContent({
+    super.key,
+    required this.folderName,
+    required this.content,
+    required this.saveData,
+  });
 
   @override
   State<FlashcardInfoContent> createState() => _FlashcardInfoContentState();
@@ -52,37 +68,21 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
   FlashcardMode mode = FlashcardMode.choosing;
   bool randomOrder = true;
 
+  late SavedSetData? saveData;
+
+  @override
+  void initState() {
+    super.initState();
+    saveData = widget.saveData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButtonInfoPage(
         distance: 84,
-        children: [
-          StartStudyingButton(
-            label: Text("Rozpocznij nową lekcje"),
-            icon: Icon(
-              Icons.add_circle_outline,
-            ),
-            onPressed: () {
-              switch (mode) {
-                case FlashcardMode.choosing:
-                  openExclusionPage(context);
-                  break;
-                case FlashcardMode.writing:
-                  openWritingPage(context);
-                  break;
-              }
-            },
-          ),
-          StartStudyingButton(
-            label: Text("Kontynuuj naukę"),
-            icon: Icon(
-              Icons.add_circle_outline,
-            ),
-            onPressed: () {},
-          ),
-        ],
+        children: _createStartButtons(),
       ),
       appBar: AppBar(
         title: Text(widget.content.name),
@@ -171,6 +171,71 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
     );
   }
 
+  List<Widget> _createStartButtons() {
+    var toReturn = List<Widget>.empty(growable: true);
+    toReturn.add(StartStudyingButton(
+      label: Text("Rozpocznij nową lekcje"),
+      icon: Icon(
+        Icons.add_circle_outline,
+      ),
+      onPressed: () {
+        startNewGame();
+        startLearning();
+      },
+    ));
+
+    if (saveData != null) {
+      toReturn.add(StartStudyingButton(
+        label: Text("Kontynuuj naukę"),
+        icon: Icon(
+          Icons.add_circle_outline,
+        ),
+        onPressed: () async {
+          await loadSavedData();
+          startLearning();
+        },
+      ));
+    }
+    return toReturn;
+  }
+
+  void startLearning() {
+    if (saveData == null) {
+      startNewGame();
+    }
+
+    switch (mode) {
+      case FlashcardMode.choosing:
+        openExclusionPage(context);
+        break;
+      case FlashcardMode.writing:
+        openWritingPage(context);
+        break;
+    }
+  }
+
+  void startNewGame() {
+    saveData = SavedSetData(
+      isRandom: randomOrder,
+      mode: mode.index,
+      reverseSides: side == 2 ? true : false,
+      currentRound: 0,
+      dataValues: List.generate(widget.content.cards.length, (index) => SavedFlashcardData(id: index, maxRound: 0)),
+    );
+    if (saveData!.isRandom) {
+      Random newRandom = Random();
+
+      int randomMaxValue = 1 << 32;
+      int seed = newRandom.nextInt(randomMaxValue);
+      saveData!.seed = seed;
+    }
+    print(jsonEncode(saveData));
+  }
+
+  Future<void> loadSavedData() async {
+    saveData = saveData ?? await SavedSetData.fromFolderName(widget.folderName);
+  }
+
   void openExclusionPage(BuildContext context) {
     Random random = Random();
 
@@ -184,9 +249,10 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
       MaterialPageRoute(
         builder: (context) => FlashcardsExclusionPage(
           flashcardData: widget.content,
-          cards: cardsToSend,
           folderName: widget.folderName,
-          firstSide: side,
+          savedData: saveData!,
+          // cards: cardsToSend,
+          // firstSide: side,
         ),
       ),
     );
@@ -199,17 +265,17 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
       cardsToSend.shuffle(random);
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FlashcardsWritingPage(
-          flashcardData: widget.content,
-          cards: cardsToSend,
-          folderName: widget.folderName,
-          firstSide: side,
-        ),
-      ),
-    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => FlashcardsWritingPage(
+    //       flashcardData: widget.content,
+    //       cards: cardsToSend,
+    //       folderName: widget.folderName,
+    //       firstSide: side,
+    //     ),
+    //   ),
+    // );
   }
 }
 
