@@ -18,7 +18,7 @@ class FlashcardSelectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.background, width: 2))),
+          BoxDecoration(border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.surface, width: 2))),
       child: FilledButton(
           onPressed: () {
             moveToFlashCard(context, flashcardData);
@@ -27,9 +27,9 @@ class FlashcardSelectButton extends StatelessWidget {
             showFlashcardDialog(context);
           },
           style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-            fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width, 80.0)),
+            fixedSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width, 80.0)),
           ),
           child: Text(flashcardData.name, style: TextStyle(fontSize: 20))),
     );

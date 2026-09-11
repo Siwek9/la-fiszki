@@ -24,10 +24,10 @@ class ButtonsWhenSuccess extends StatelessWidget {
             Expanded(
               child: FilledButton(
                 style: ButtonStyle(
-                  fixedSize: MaterialStatePropertyAll(Size.fromHeight(60)),
-                  backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary.withOpacity(1)),
-                  foregroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.onSecondary),
-                  shape: MaterialStatePropertyAll(
+                  fixedSize: WidgetStatePropertyAll(Size.fromHeight(60)),
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary.withValues(alpha: 1)),
+                  foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSecondary),
+                  shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(12.0)),
                     ),

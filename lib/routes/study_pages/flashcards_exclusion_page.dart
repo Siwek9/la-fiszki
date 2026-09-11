@@ -111,7 +111,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
               children: [
                 ChooseButton(
                   text: "Wiem",
-                  color: MaterialStatePropertyAll(Colors.green),
+                  color: WidgetStatePropertyAll(Colors.green),
                   constraints: constraints,
                   onPressed: () {
                     whenUserKnow(widget.cards[cardNow]);
@@ -119,7 +119,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                 ),
                 ChooseButton(
                   text: "Nie wiem",
-                  color: MaterialStatePropertyAll(Colors.red),
+                  color: WidgetStatePropertyAll(Colors.red),
                   constraints: constraints,
                   onPressed: () {
                     whenUserDontKnow(widget.cards[cardNow]);

@@ -10,9 +10,9 @@ class NewPageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton(
       style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-          fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width, height ?? 50))),
+          fixedSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width, height ?? 50))),
       onPressed: () {
         Navigator.push(
             context,

@@ -100,7 +100,7 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
               child: Text(
                 "Lista Fiszek:",
                 style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -327,11 +327,11 @@ class StartStudyingButton extends StatelessWidget {
         ),
         onPressed: onPressed,
         style: ButtonStyle(
-          shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero))),
-          backgroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.secondary),
-          foregroundColor: MaterialStatePropertyAll(Theme.of(context).colorScheme.onBackground),
-          iconSize: MaterialStatePropertyAll(50),
-          padding: MaterialStatePropertyAll(EdgeInsets.all(20)),
+          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero))),
+          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
+          foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface),
+          iconSize: WidgetStatePropertyAll(50),
+          padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
         ),
         label: Text(
           "Rozpocznij naukę ($modeName)",

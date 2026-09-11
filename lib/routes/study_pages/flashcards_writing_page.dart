@@ -381,11 +381,11 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
 
   Color setFilledColor(isFocus) {
     if (widget.statusValue == FlashcardTextInputStatus.normal) {
-      return isFocus ? Colors.white.withOpacity(0.2) : Colors.transparent;
+      return isFocus ? Colors.white.withValues(alpha: 0.2) : Colors.transparent;
     } else if (widget.statusValue == FlashcardTextInputStatus.success) {
-      return Colors.green.withOpacity(1);
+      return Colors.green.withValues(alpha: 1);
     } else {
-      return Colors.red.withOpacity(1);
+      return Colors.red.withValues(alpha: 1);
     }
   }
 
@@ -436,7 +436,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
               decoration: InputDecoration(
                 isCollapsed: true,
                 hintText: widget.hintText == null ? "Wpisz tekst" : null,
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
                 prefixText: widget.prefixText,
                 prefixIcon: () {
                   if (widget.statusValue == FlashcardTextInputStatus.error) {
@@ -485,7 +485,7 @@ class _FlashcardTextInputFieldState extends State<FlashcardTextInputField> {
                     overflow: TextOverflow.fade,
                     // softWrap: false,
                     style: textStyle.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.6),
                     ),
                   ),
                 ),

@@ -83,7 +83,7 @@ class FlashcardSummary extends StatelessWidget {
                             width: constraints.maxWidth - 25,
                             child: FilledButton(
                               style: ButtonStyle(
-                                shape: MaterialStatePropertyAll(
+                                shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 ),
                               ),
@@ -105,7 +105,7 @@ class FlashcardSummary extends StatelessWidget {
                             width: constraints.maxWidth - 25,
                             child: FilledButton(
                               style: ButtonStyle(
-                                shape: MaterialStatePropertyAll(
+                                shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 ),
                               ),
@@ -129,7 +129,7 @@ class FlashcardSummary extends StatelessWidget {
                           width: constraints.maxWidth - 75,
                           child: ElevatedButton(
                             style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
+                              shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                               ),
                             ),

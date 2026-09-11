@@ -1,0 +1,2 @@
+/home/siwek9/Documents/GitHub/la-fiszki/android/app/.cxx/RelWithDebInfo/254d524s/armeabi-v7a/CMakeFiles/edit_cache.dir
+/home/siwek9/Documents/GitHub/la-fiszki/android/app/.cxx/RelWithDebInfo/254d524s/armeabi-v7a/CMakeFiles/rebuild_cache.dir

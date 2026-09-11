@@ -33,7 +33,9 @@ class Flashcard {
         content?['author'] == null ||
         content?['sideName']['front'] == null ||
         content?['sideName']['back'] == null ||
-        content?['cardboards'] == null) return false;
+        content?['cardboards'] == null) {
+          return false;
+        }
 
     if (content['cardboards'] is! List) return false;
 

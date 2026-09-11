@@ -4,7 +4,7 @@ class ChooseButton extends StatelessWidget {
   const ChooseButton(
       {super.key, required this.text, required this.color, required this.constraints, required this.onPressed});
   final String text;
-  final MaterialStateProperty<Color> color;
+  final WidgetStateProperty<Color> color;
   final BoxConstraints constraints;
   final VoidCallback onPressed;
 
@@ -17,7 +17,7 @@ class ChooseButton extends StatelessWidget {
           onPressed: onPressed,
           style: ButtonStyle(
             backgroundColor: color,
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
           ),
           child: Text(
